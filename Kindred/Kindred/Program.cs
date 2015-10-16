@@ -44,7 +44,7 @@ namespace Kindred
         {
             if (Player.Instance.ChampionName != "Kindred") return;
 
-            Chat.Print("Kindred Loaded!", Color.CornflowerBlue);
+            Chat.Print("Kindred Dude Loaded!", Color.CornflowerBlue);
 
 
             #region Skill
@@ -59,26 +59,27 @@ namespace Kindred
 
 
 
-            #region Menus
+            #region 
 
             Kindred = MainMenu.AddMenu("Kindred Dude", "kindude");
             Kindred.AddGroupLabel("Kindred Dude - " + version);
             Kindred.AddLabel("Made by -Koka");
+
+            Draw = Kindred.AddSubMenu("Draw Menu", "kindra");
+            Draw.AddGroupLabel("Draw Settings");
+            Draw.Add("nodraw", new CheckBox("No Display Drawing", false));
+            Draw.Add("onlyR", new CheckBox("Display only Ready", true));
+            Draw.AddSeparator();
+            Draw.Add("drawq", new CheckBox("Draw Q Range", true));
+            Draw.Add("drawW", new CheckBox("Draw W Range", true));
+            Draw.Add("drawE", new CheckBox("Draw E Range", true));
+            Draw.Add("drawr", new CheckBox("Draw R Range", true));
 
             Combo = Kindred.AddSubMenu("Combo Menu", "kincombo");
             Combo.AddGroupLabel("Combo");
             Combo.Add("useq", new CheckBox("Use Q in Combo", true));
             Combo.Add("usew", new CheckBox("Use W in Combo", true));
             Combo.Add("usee", new CheckBox("Use E in Combo", true));
-
-            Rmenu = Kindred.AddSubMenu("R Menu", "kinr");
-            Rmenu.AddGroupLabel("R Menu");
-            Rmenu.Add("minhp", new Slider("Min. HP to use R", 30, 0, 100));
-            foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly))
-            {
-                Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
-            }
-
 
             Ks = Kindred.AddSubMenu("KillSteal Menu", "kinks");
             Ks.AddGroupLabel("Kill Steal");
@@ -95,22 +96,30 @@ namespace Kindred
             LaneClear.Add("min", new Slider("Min. Minions to Q", 2, 0, 10));
             LaneClear.Add("wmin", new Slider("Min. Minions to W", 2, 0, 10));
 
-            Jungle = Kindred.AddSubMenu("Jungle Settings", "kinlcs");
+            
+
+            Jungle = Kindred.AddSubMenu("Jungle Settings", "kinjc");
             Jungle.AddGroupLabel("Jungle Settings");
             Jungle.Add("qjungle", new CheckBox("Use Q in Jungle", true));
             Jungle.Add("wjungle", new CheckBox("Use W in Jungle", true));
             Jungle.Add("ejungle", new CheckBox("Use E in Jungle", true));
-            Jungle.Add("mana", new Slider("Min. Mana %", 30, 0, 100));
+            Jungle.Add("manaj", new Slider("Min. Mana %", 30, 0, 100));
 
-            Draw = Kindred.AddSubMenu("Draw Menu", "kindra");
-            Draw.AddGroupLabel("Draw Settings");
-            Draw.Add("nodraw", new CheckBox("No Display Drawing", false));
-            Draw.Add("onlyR", new CheckBox("Display only Ready", true));
-            Draw.AddSeparator();
-            Draw.Add("drawq", new CheckBox("Draw Q Range", true));
-            Draw.Add("drawW", new CheckBox("Draw W Range", true));
-            Draw.Add("drawE", new CheckBox("Draw E Range", true));
-            Draw.Add("drawr", new CheckBox("Draw R Range", true));
+            
+
+
+
+            Rmenu = Kindred.AddSubMenu("R Menu", "kinr");
+            Rmenu.AddGroupLabel("R Menu");
+            Rmenu.Add("minhp", new Slider("Min. HP to use R", 30, 0, 100));
+            foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && _Player.CanCast))
+            {
+                if (ally.BaseSkinName == "KindredWolf") return;
+                Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
+            }
+
+            
+
 
 
 
@@ -232,7 +241,7 @@ namespace Kindred
             var q = Jungle["qjungle"].Cast<CheckBox>().CurrentValue;
             var w = Jungle["wjungle"].Cast<CheckBox>().CurrentValue;
             var e = Jungle["ejungle"].Cast<CheckBox>().CurrentValue;
-            var mana = Jungle["mana"].Cast<Slider>().CurrentValue;
+            var mana = Jungle["manaj"].Cast<Slider>().CurrentValue;
             var monster = ObjectManager.Get<Obj_AI_Minion>().OrderBy(m => m.Health).FirstOrDefault(m => m.IsEnemy && m.IsValidTarget(E.Range));
 
 
