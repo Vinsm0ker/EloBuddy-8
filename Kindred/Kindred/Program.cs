@@ -33,7 +33,7 @@ namespace Kindred
         static void Main(string[] args)
         {
             Loading.OnLoadingComplete += OnLoadingComplete;
-            Game.OnUpdate += GameOnUpdate;
+            Game.OnUpdate += OnGameUpdate;
             Game.OnTick += GameOnTick;
             Drawing.OnDraw += GameOnDraw;
         }
@@ -84,7 +84,7 @@ namespace Kindred
             Ks = Kindred.AddSubMenu("KillSteal Menu", "kinks");
             Ks.AddGroupLabel("Kill Steal");
             Ks.Add("ksq", new CheckBox("Ks with Q", true));
-            Ks.Add("ksi", new CheckBox("Ks with Ignite", true));
+            Ks.Add("ksi", new CheckBox("Ks with Ignite [WIP]", true));
 
             LaneClear = Kindred.AddSubMenu("LaneClear Settings", "kinlcs");
             LaneClear.AddGroupLabel("LaneClear Settings");
@@ -130,7 +130,25 @@ namespace Kindred
         private static void GameOnTick(EventArgs args)
         {
             KillSteal();
+            RLogic();
 
+        }
+
+        private static void OnGameUpdate(EventArgs args)
+        {
+            switch(Orbwalker.ActiveModesFlags)
+            {
+                case Orbwalker.ActiveModes.Combo:
+                    OnCombo();
+                    break;
+                case Orbwalker.ActiveModes.JungleClear:
+                    OnJungle();
+                    break;
+                case Orbwalker.ActiveModes.LaneClear:
+                    OnLaneClear();
+                    break;
+
+            }
         }
 
 
@@ -192,6 +210,7 @@ namespace Kindred
         }
 
 
+
         public static void OnCombo()
         {
             var alvo = TargetSelector.GetTarget(1000, DamageType.Physical);
@@ -199,7 +218,7 @@ namespace Kindred
 
             if (!Q.IsOnCooldown && Combo["useq"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 800)
             {
-                Q.Cast(Game.CursorPos);
+                Q.Cast(Game.ActiveCursorPos);
             }
 
             if (!W.IsOnCooldown && Combo["usew"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
@@ -220,18 +239,18 @@ namespace Kindred
             var w = LaneClear["wlane"].Cast<CheckBox>().CurrentValue;
             var mp = LaneClear["mana"].Cast<Slider>().CurrentValue;
             var min = LaneClear["min"].Cast<Slider>().CurrentValue;
-            var wmin = LaneClear["min"].Cast<Slider>().CurrentValue;
+            var wmin = LaneClear["wmin"].Cast<Slider>().CurrentValue;
 
             if (_Player.ManaPercent < mp) return;
 
             if (q && Q.IsReady() && Minions >= min)
             {
-                Q.Cast(Game.CursorPos);
+                Q.Cast(Game.ActiveCursorPos);
             }
 
             if (w && W.IsReady() && Minions >= wmin)
             {
-                W.Cast(Game.CursorPos);
+                W.Cast();
             }
 
         }
@@ -270,7 +289,7 @@ namespace Kindred
 
         public static void KillSteal()
         {
-            var Target = TargetSelector.GetTarget(500, DamageType.Physical);
+            var Target = TargetSelector.GetTarget(1500, DamageType.Physical);
             if (Target == null) return;
             var hp = Target.Health;
             var ap = _Player.FlatMagicDamageMod + _Player.BaseAbilityDamage;
@@ -279,7 +298,7 @@ namespace Kindred
             var useq = Ks["ksq"].Cast<CheckBox>().CurrentValue;
             var usei = Ks["ksi"].Cast<CheckBox>().CurrentValue;
 
-            if (Q.IsReady() && useq && !Target.IsZombie && Target.Health < _Player.GetSpellDamage(Target, SpellSlot.Q))
+            if (Q.IsReady() && useq && !Target.IsZombie && Target.Health < Damage.CalculateDamageOnUnit(_Player,Target,DamageType.Physical, 60 + ((Q.Level - 1) * 30) + ad/5))
             {
                 Q.Cast(Target.Position);
 
@@ -292,33 +311,14 @@ namespace Kindred
 
             foreach (var ally in EntityManager.Heroes.Allies.Where(o => o.HealthPercent < mHP && !o.IsRecalling() && !o.IsDead && !o.IsZombie && _Player.Distance(o.Position) < R.Range && !o.IsInShopRange()))
             {
-                if (Rmenu["r" + ally.BaseSkinName].Cast<CheckBox>().CurrentValue && _Player.CountEnemiesInRange(1500) > 1 && ally.CountEnemiesInRange(1500) > 1)
+                if (Rmenu["r" + ally.BaseSkinName].Cast<CheckBox>().CurrentValue && _Player.CountEnemiesInRange(1500) >= 1)
                 {
                     R.Cast(ally);
                 }
 
             }
         }
-        private static void GameOnUpdate(EventArgs args)
-        {
-
-            switch (Orbwalker.ActiveModesFlags)
-            {
-                case Orbwalker.ActiveModes.Combo:
-                    OnCombo();
-                    break;
-
-                case Orbwalker.ActiveModes.LaneClear:
-                    OnLaneClear();
-                    break;
-
-                case Orbwalker.ActiveModes.JungleClear:
-                    OnJungle();
-                    break;
-            }
-
-        }
-
+        
 
 
     }
