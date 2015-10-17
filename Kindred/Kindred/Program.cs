@@ -22,6 +22,8 @@ namespace Kindred
             get { return ObjectManager.Player; }
         }
 
+        
+
         public static Menu Kindred, Combo, Ks, LaneClear, Draw, Rmenu, Jungle;
         public static string version = "1.0";
 
@@ -129,6 +131,7 @@ namespace Kindred
         }
         private static void GameOnTick(EventArgs args)
         {
+            
             KillSteal();
             RLogic();
 
@@ -136,25 +139,32 @@ namespace Kindred
 
         private static void OnGameUpdate(EventArgs args)
         {
-            switch(Orbwalker.ActiveModesFlags)
+            if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.Combo)
             {
-                case Orbwalker.ActiveModes.Combo:
-                    OnCombo();
-                    break;
-                case Orbwalker.ActiveModes.JungleClear:
-                    OnJungle();
-                    break;
-                case Orbwalker.ActiveModes.LaneClear:
-                    OnLaneClear();
-                    break;
-
+                OnCombo();
             }
+            else if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.LaneClear)
+            {
+                
+                OnLaneClear();
+            }
+            else if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.JungleClear)
+            {
+                
+
+                OnJungle();
+            }
+
+
         }
 
 
         public static void GameOnDraw(EventArgs args)
         {
             if (Draw["nodraw"].Cast<CheckBox>().CurrentValue) return;
+
+
+
 
             if (!Draw["onlyR"].Cast<CheckBox>().CurrentValue)
             {
@@ -214,19 +224,19 @@ namespace Kindred
         public static void OnCombo()
         {
             var alvo = TargetSelector.GetTarget(1000, DamageType.Physical);
-            if (!alvo.IsValid || alvo.IsDead || alvo.IsZombie || _Player.IsDead) return;
+            if (alvo == null || !alvo.IsValid || alvo.IsDead || alvo.IsZombie || _Player.IsDead) return;
 
-            if (!Q.IsOnCooldown && Combo["useq"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 800)
+            if (Q.IsReady() && Combo["useq"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
                 Q.Cast(Game.ActiveCursorPos);
             }
 
-            if (!W.IsOnCooldown && Combo["usew"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
+            if (W.IsReady() && Combo["usew"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700 && !_Player.HasBuff("kindredwclonebuffvisible"))
             {
                 W.Cast();
             }
 
-            if (!E.IsOnCooldown && Combo["usee"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
+            if (E.IsReady() && Combo["usee"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
                 E.Cast(alvo);
             }
@@ -234,21 +244,23 @@ namespace Kindred
 
         public static void OnLaneClear()
         {
-            var Minions = EntityManager.MinionsAndMonsters.Get(EntityManager.MinionsAndMonsters.EntityType.Minion, EntityManager.UnitTeam.Enemy).Count();
+            Chat.Print("Lane");
+            var Minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy,_Player.Position,540).Count();
             var q = LaneClear["qlane"].Cast<CheckBox>().CurrentValue;
             var w = LaneClear["wlane"].Cast<CheckBox>().CurrentValue;
             var mp = LaneClear["mana"].Cast<Slider>().CurrentValue;
             var min = LaneClear["min"].Cast<Slider>().CurrentValue;
             var wmin = LaneClear["wmin"].Cast<Slider>().CurrentValue;
 
+
             if (_Player.ManaPercent < mp) return;
 
             if (q && Q.IsReady() && Minions >= min)
             {
-                Q.Cast(Game.ActiveCursorPos);
+                Q.Cast(Game.CursorPos);
             }
 
-            if (w && W.IsReady() && Minions >= wmin)
+            if (w && W.IsReady() && Minions >= wmin && !_Player.HasBuff("kindredwclonebuffvisible"))
             {
                 W.Cast();
             }
@@ -257,23 +269,24 @@ namespace Kindred
 
         public static void OnJungle()
         {
+            Chat.Print("Jungle");
             var q = Jungle["qjungle"].Cast<CheckBox>().CurrentValue;
             var w = Jungle["wjungle"].Cast<CheckBox>().CurrentValue;
             var e = Jungle["ejungle"].Cast<CheckBox>().CurrentValue;
             var mana = Jungle["manaj"].Cast<Slider>().CurrentValue;
-            var monster = ObjectManager.Get<Obj_AI_Minion>().OrderBy(m => m.Health).FirstOrDefault(m => m.IsEnemy && m.IsValidTarget(E.Range));
+            var monster = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.Position, 600,true).FirstOrDefault();
 
 
 
             if (monster == null) return;
 
-            if (_Player.ManaPercent > mana)
+            if (_Player.ManaPercent >= mana)
             {
-                if (Q.IsReady() && q)
+                if (Q.IsReady() && q )
                 {
                     Q.Cast(Game.CursorPos);
                 }
-                if (W.IsReady() && w)
+                if (W.IsReady() && w && !_Player.HasBuff("kindredwclonebuffvisible")) 
                 {
                     W.Cast();
                 }
