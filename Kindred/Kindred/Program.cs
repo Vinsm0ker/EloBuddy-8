@@ -51,7 +51,7 @@ namespace Kindred
 
             Chat.Print("Kindred Dude Loaded!", Color.CornflowerBlue);
 
-            Hacks.RenderWatermark = false;
+            
 
             #region Skill
 
@@ -115,37 +115,17 @@ namespace Kindred
 
 
 
-            Rmenu = Kindred.AddSubMenu("R Menu", "kinr");
-            Rmenu.AddGroupLabel("R Menu");
-            Rmenu.Add("minhp", new Slider("Min. HP to use R", 30, 0, 100));
-            Rmenu.Add("ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
-
-            foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && _Player.CanCast))
-            {
-                if (ally.BaseSkinName == "kindredwolf") return;
-                Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
-            }
-
-            Rmenu.AddSeparator();
-            Rmenu.AddGroupLabel("Protector Skill Whitelist");
-            Rmenu.Add("dprotector", new CheckBox("Disable Protector", false));
-            Rmenu.Add("hpprotector", new Slider("Min. Hp Protector", 30, 0, 100));
-
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(o=> o.IsEnemy))
-            {
-                foreach(var skillshot in SpellDB.SpellDatabase.Spells.Where(x => x.charName == enemy.BaseSkinName))
-                {
-                    Rmenu.Add("champ." + skillshot.spellName, new CheckBox(skillshot.spellName + " | " + skillshot.charName, true));
-                }
-            }
+            
         
 
             Misc = Kindred.AddSubMenu("Misc Menu", "kinmisc");
             Misc.AddGroupLabel("AntiGap Closer -BETA");
             Misc.Add("antigp", new CheckBox("AntiGap Closer With Q", true));
 
+
             Game.OnTick += GameOnTick;
 
+            CreateRMenu();
 
 
 
@@ -167,6 +147,33 @@ namespace Kindred
 
 
         }
+        public static void CreateRMenu()
+        {
+            Rmenu = Kindred.AddSubMenu("R Menu", "kinr");
+            Rmenu.AddGroupLabel("R Menu");
+            Rmenu.Add("minhp", new Slider("Min. HP to use R", 30, 0, 100));
+            Rmenu.Add("ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
+
+            foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && _Player.CanCast))
+            {
+                if (ally.BaseSkinName == "kindredwolf") return;
+                Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
+            }
+
+            Rmenu.AddSeparator();
+            Rmenu.AddGroupLabel("Protector Skill Whitelist");
+            Rmenu.Add("dprotector", new CheckBox("Disable Protector", false));
+            Rmenu.Add("hpprotector", new Slider("Min. Hp Protector", 10, 0, 100));
+
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsEnemy))
+            {
+                foreach (var skillshot in SpellDB.SpellDatabase.Spells.Where(x => x.charName == enemy.BaseSkinName))
+                {
+                    Rmenu.Add("champ." + skillshot.spellName, new CheckBox(skillshot.spellName + " | " + skillshot.charName, true));
+                }
+            }
+
+        }
         private static void AntiGapCloser(AIHeroClient sender, Gapcloser.GapcloserEventArgs gapcloser)
         {
             
@@ -178,12 +185,7 @@ namespace Kindred
 
         private static void OnGameUpdate(EventArgs args)
         {
-
             
-            
-
-
-
         }
 
 
