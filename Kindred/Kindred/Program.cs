@@ -50,6 +50,7 @@ namespace Kindred
             if (Player.Instance.ChampionName != "Kindred") return;
 
             Chat.Print("Kindred Dude Loaded!",Color.CornflowerBlue);
+            Chat.Print("Enjoy the game and DONT FEED!",Color.CornflowerBlue);
 
             Game.OnTick += GameOnTick;
 
