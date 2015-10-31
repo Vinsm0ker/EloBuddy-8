@@ -124,25 +124,27 @@ namespace Kindred
                 if (ally.BaseSkinName == "KindredWolf") return;
                 Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
+
             Rmenu.AddSeparator();
             Rmenu.AddGroupLabel("Protector Skill Whitelist");
             Rmenu.Add("dprotector", new CheckBox("Disable Protector", false));
             Rmenu.Add("hpprotector", new Slider("Min. Hp Protector", 30, 0, 100));
+
             foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(o=> o.IsEnemy))
             {
                 foreach(var skillshot in SpellDB.SpellDatabase.Spells.Where(x => x.charName == enemy.BaseSkinName))
                 {
-                    Rmenu.Add("champ." + skillshot.spellName, new CheckBox(skillshot.spellName + "|" + skillshot.charName, true));
+                    Rmenu.Add("champ." + skillshot.spellName, new CheckBox(skillshot.spellName + " | " + skillshot.charName, true));
                 }
             }
-
+        
 
             Misc = Kindred.AddSubMenu("Misc Menu", "kinmisc");
             Misc.AddGroupLabel("AntiGap Closer -BETA");
             Misc.Add("antigp", new CheckBox("AntiGap Closer With Q", true));
 
-                
 
+            
 
 
 
