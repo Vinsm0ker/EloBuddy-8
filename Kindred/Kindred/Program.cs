@@ -38,7 +38,7 @@ namespace Kindred
             Loading.OnLoadingComplete += OnLoadingComplete;
             Game.OnUpdate += OnGameUpdate;
             Drawing.OnDraw += GameOnDraw;
-            Game.OnTick += GameOnTick;
+            
             Gapcloser.OnGapcloser += AntiGapCloser;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
         }
@@ -119,9 +119,10 @@ namespace Kindred
             Rmenu.AddGroupLabel("R Menu");
             Rmenu.Add("minhp", new Slider("Min. HP to use R", 30, 0, 100));
             Rmenu.Add("ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
+
             foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && _Player.CanCast))
             {
-                if (ally.BaseSkinName == "KindredWolf") return;
+                if (ally.BaseSkinName == "kindredwolf") return;
                 Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
 
@@ -143,8 +144,8 @@ namespace Kindred
             Misc.AddGroupLabel("AntiGap Closer -BETA");
             Misc.Add("antigp", new CheckBox("AntiGap Closer With Q", true));
 
+            Game.OnTick += GameOnTick;
 
-            
 
 
 
