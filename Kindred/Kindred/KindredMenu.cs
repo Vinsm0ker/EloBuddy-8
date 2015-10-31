@@ -96,6 +96,7 @@ namespace Kindred
             kinr.AddSeparator();
             kinr.Add("rlogic.minhp", new Slider("Min. HP to use R", 30, 0, 100));
             kinr.Add("rlogic.ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
+            kinr.AddSeparator();
             
             foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && Program._Player.CanCast))
             {
