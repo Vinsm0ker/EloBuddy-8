@@ -46,6 +46,7 @@ namespace Kindred
         {
             kindraw = kindum.AddSubMenu("Draw  settings", "Draw");
             kindraw.AddGroupLabel("Draw Settings");
+            kindraw.AddSeparator();
             kindraw.Add("nodraw", new CheckBox("No Display Drawing", false));
             kindraw.Add("onlyReady", new CheckBox("Display only Ready", true));
             kindraw.AddSeparator();
@@ -98,8 +99,10 @@ namespace Kindred
         }
         public static void kinrpage()
         {
-            kinr = kindum.AddSubMenu("R Menu", "rlogic");
-            kinr.AddGroupLabel("R Menu");
+            kinr = kindum.AddSubMenu("Ultimate Menu", "rlogic");
+            kinr.AddSeparator();
+            kinr.AddGroupLabel("Lamb's Respite Menu");
+            kinr.AddSeparator();
             kinr.Add("rlogic.minhp", new Slider("Min. HP to use R", 30, 0, 100));
             kinr.Add("rlogic.ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
             
