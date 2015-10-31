@@ -22,8 +22,8 @@ namespace Kindred
             get { return ObjectManager.Player; }
         }
 
-        
 
+        
         public static Menu Kindred, Combo, Ks, LaneClear, Draw, Rmenu, Jungle;
         public static string version = "1.0";
 
@@ -36,8 +36,8 @@ namespace Kindred
         {
             Loading.OnLoadingComplete += OnLoadingComplete;
             Game.OnUpdate += OnGameUpdate;
-            Game.OnTick += GameOnTick;
             Drawing.OnDraw += GameOnDraw;
+            Game.OnTick += GameOnTick;
         }
 
 
@@ -48,6 +48,7 @@ namespace Kindred
 
             Chat.Print("Kindred Dude Loaded!", Color.CornflowerBlue);
 
+            Hacks.RenderWatermark = false;
 
             #region Skill
 
@@ -120,7 +121,10 @@ namespace Kindred
                 Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
 
-            
+                
+
+
+
 
 
 
@@ -131,29 +135,22 @@ namespace Kindred
         }
         private static void GameOnTick(EventArgs args)
         {
-            
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo)) OnCombo();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear)) OnJungle();
+
             KillSteal();
             RLogic();
+
 
         }
 
         private static void OnGameUpdate(EventArgs args)
         {
-            if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.Combo)
-            {
-                OnCombo();
-            }
-            else if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.LaneClear)
-            {
-                
-                OnLaneClear();
-            }
-            else if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.JungleClear)
-            {
-                
 
-                OnJungle();
-            }
+            
+            
+
 
 
         }
@@ -223,6 +220,7 @@ namespace Kindred
 
         public static void OnCombo()
         {
+
             var alvo = TargetSelector.GetTarget(1000, DamageType.Physical);
             if (alvo == null || !alvo.IsValid || alvo.IsDead || alvo.IsZombie || _Player.IsDead) return;
 
@@ -231,7 +229,7 @@ namespace Kindred
                 Q.Cast(Game.ActiveCursorPos);
             }
 
-            if (W.IsReady() && Combo["usew"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700 && !_Player.HasBuff("kindredwclonebuffvisible"))
+            if (W.State == SpellState.Ready && Combo["usew"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
             {
                 W.Cast();
             }
@@ -244,7 +242,6 @@ namespace Kindred
 
         public static void OnLaneClear()
         {
-            Chat.Print("Lane");
             var Minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy,_Player.Position,540).Count();
             var q = LaneClear["qlane"].Cast<CheckBox>().CurrentValue;
             var w = LaneClear["wlane"].Cast<CheckBox>().CurrentValue;
@@ -260,7 +257,7 @@ namespace Kindred
                 Q.Cast(Game.CursorPos);
             }
 
-            if (w && W.IsReady() && Minions >= wmin && !_Player.HasBuff("kindredwclonebuffvisible"))
+            if (w && W.State == SpellState.Ready && Minions >= wmin)
             {
                 W.Cast();
             }
@@ -269,16 +266,18 @@ namespace Kindred
 
         public static void OnJungle()
         {
-            Chat.Print("Jungle");
             var q = Jungle["qjungle"].Cast<CheckBox>().CurrentValue;
             var w = Jungle["wjungle"].Cast<CheckBox>().CurrentValue;
             var e = Jungle["ejungle"].Cast<CheckBox>().CurrentValue;
             var mana = Jungle["manaj"].Cast<Slider>().CurrentValue;
-            var monster = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.Position, 600,true).FirstOrDefault();
+            var monster = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.Position, W.Range).ToArray();
 
 
 
-            if (monster == null) return;
+            if (monster.Length == 0)
+            {
+                return;
+            }
 
             if (_Player.ManaPercent >= mana)
             {
@@ -292,7 +291,7 @@ namespace Kindred
                 }
                 if (E.IsReady() && e)
                 {
-                    E.Cast(monster);
+                    E.Cast(monster[0]);
                 }
             }
 
