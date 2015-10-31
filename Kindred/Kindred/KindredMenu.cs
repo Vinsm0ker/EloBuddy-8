@@ -92,7 +92,6 @@ namespace Kindred
         public static void kinrpage()
         {
             kinr = kindum.AddSubMenu("Ultimate Menu", "rlogic");
-            kinr.AddSeparator();
             kinr.AddGroupLabel("Lamb's Respite Menu");
             kinr.AddSeparator();
             kinr.Add("rlogic.minhp", new Slider("Min. HP to use R", 30, 0, 100));
