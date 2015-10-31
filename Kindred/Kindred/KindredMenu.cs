@@ -32,7 +32,6 @@ namespace Kindred
         {
             kindum = MainMenu.AddMenu("Kindred Dude", "main");
             kindum.AddGroupLabel("About this script");
-            kindum.AddSeparator();
             kindum.AddLabel(" Kindred Dude - " + Program.version);
             kindum.AddLabel(" Made by -Koka and -iRaxe");
             kindum.AddSeparator();
@@ -56,7 +55,6 @@ namespace Kindred
             kindraw.Add("draw.R", new CheckBox("Draw R Range", true));
             kindraw.AddSeparator();
             kindraw.AddGroupLabel("Pro Tips");
-            kindraw.AddSeparator();
             kindraw.AddLabel(" - Uncheck the boxes if you wish to dont see a specific spell draw");
         }
 
@@ -71,7 +69,6 @@ namespace Kindred
             kincombo.Add("combo.R", new CheckBox("Use R"));
             kincombo.AddSeparator();
             kincombo.AddGroupLabel("Pro Tips");
-            kincombo.AddSeparator();
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
 
         }
@@ -93,7 +90,6 @@ namespace Kindred
             kinlcs.Add("jungle.E", new CheckBox("Use W jungle "));
             kinlcs.AddSeparator();
             kinlcs.AddGroupLabel("Pro Tips");
-            kinlcs.AddSeparator();
             kinlcs.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
 
         }
