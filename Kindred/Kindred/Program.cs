@@ -24,7 +24,7 @@ namespace Kindred
 
 
         
-        public static Menu Kindred, Combo, Ks, LaneClear, Draw, Rmenu, Jungle;
+        public static Menu Kindred, Combo, Ks, LaneClear, Draw, Rmenu, Jungle, Misc;
         public static string version = "1.0";
 
         public static Spell.Skillshot Q;
@@ -121,6 +121,10 @@ namespace Kindred
                 Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
 
+            Misc = Kindred.AddSubMenu("Misc Menu", "kinmisc");
+            Misc.AddGroupLabel("AntiGap Closer -BETA");
+            Misc.Add("antigp", new CheckBox("AntiGap Closer With Q", true));
+
                 
 
 
@@ -143,6 +147,14 @@ namespace Kindred
             RLogic();
 
 
+        }
+        private static void AntiGapCloser(Gapcloser.GapcloserEventArgs gapcloser)
+        {
+            
+            if(gapcloser.End.Distance(_Player.ServerPosition) <= 300)
+            {
+                Q.Cast(gapcloser.End.Extend(_Player.Position,_Player.Distance(gapcloser.End) + Q.Range).To3D());
+            }
         }
 
         private static void OnGameUpdate(EventArgs args)
@@ -285,7 +297,7 @@ namespace Kindred
                 {
                     Q.Cast(Game.CursorPos);
                 }
-                if (W.IsReady() && w && !_Player.HasBuff("kindredwclonebuffvisible")) 
+                if (W.State == SpellState.Ready && w) 
                 {
                     W.Cast();
                 }
