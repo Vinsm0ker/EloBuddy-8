@@ -38,6 +38,7 @@ namespace Kindred
             Game.OnUpdate += OnGameUpdate;
             Drawing.OnDraw += GameOnDraw;
             Game.OnTick += GameOnTick;
+            Gapcloser.OnGapcloser += AntiGapCloser;
         }
 
 
@@ -148,7 +149,7 @@ namespace Kindred
 
 
         }
-        private static void AntiGapCloser(Gapcloser.GapcloserEventArgs gapcloser)
+        private static void AntiGapCloser(AIHeroClient sender, Gapcloser.GapcloserEventArgs gapcloser)
         {
             
             if(gapcloser.End.Distance(_Player.ServerPosition) <= 300)
