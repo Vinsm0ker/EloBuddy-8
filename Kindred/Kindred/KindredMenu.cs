@@ -32,7 +32,6 @@ namespace Kindred
         {
             kindum = MainMenu.AddMenu("Kindred Dude", "main");
             kindum.AddGroupLabel("About this script");
-            kindum.AddSeparator();
             kindum.AddLabel(" Kindred Dude - " + Program.version);
             kindum.AddLabel(" Made by -Koka and -iRaxe");
             kindum.AddSeparator();
@@ -55,7 +54,6 @@ namespace Kindred
             kindraw.Add("draw.R", new CheckBox("Draw R Range", true));
             kindraw.AddSeparator();
             kindraw.AddGroupLabel("Pro Tips");
-            kindraw.AddSeparator();
             kindraw.AddLabel(" - Uncheck the boxes if you wish to dont see a specific spell draw");
         }
 
@@ -63,13 +61,12 @@ namespace Kindred
         {
             kincombo = kindum.AddSubMenu("Combo settings", "Combo");
             kincombo.AddGroupLabel("Combo settings");
-            kincombo.AddSeparator();
             kincombo.Add("combo.Q", new CheckBox("Use Q"));
             kincombo.Add("combo.W", new CheckBox("Use W"));
             kincombo.Add("combo.E", new CheckBox("Use E"));
             kincombo.Add("combo.R", new CheckBox("Use R"));
-            kincombo.AddGroupLabel("Pro Tips");
             kincombo.AddSeparator();
+            kincombo.AddGroupLabel("Pro Tips");
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
 
         }
@@ -77,7 +74,6 @@ namespace Kindred
         {
             kinlcs = kindum.AddSubMenu("Lane Clear Settings", "laneclear");
             kinlcs.AddGroupLabel("Lane clear settings");
-            kinlcs.AddSeparator();
             kinlcs.Add("lc.Q", new CheckBox("Use Q"));
             kinlcs.Add("lc.W", new CheckBox("Use W"));
             kinlcs.Add("lc.Mana", new Slider("Min. Mana%",30));
@@ -85,21 +81,22 @@ namespace Kindred
             kinlcs.Add("lc.MinionsW", new Slider("Min. Mana%", 3,0,10));
             kinlcs.AddSeparator();
             kinlcs.AddGroupLabel("Jungle Settings");
-            kinlcs.AddSeparator();
             kinlcs.Add("jungle.Q", new CheckBox("Use Q jungle"));
             kinlcs.Add("jungle.W", new CheckBox("Use E jungle"));
             kinlcs.Add("jungle.E", new CheckBox("Use W jungle "));
-            kinlcs.AddGroupLabel("Pro Tips");
             kinlcs.AddSeparator();
-            kinlcs.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
+            kinlcs.AddGroupLabel("Pro Tips");
+            kinlcs.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Jungle/LaneClear Key");
 
         }
         public static void kinrpage()
         {
-            kinr = kindum.AddSubMenu("R Menu", "rlogic");
-            kinr.AddGroupLabel("R Menu");
+            kinr = kindum.AddSubMenu("Ultimate Menu", "rlogic");
+            kinr.AddGroupLabel("Lamb's Respite Menu");
+            kinr.AddSeparator();
             kinr.Add("rlogic.minhp", new Slider("Min. HP to use R", 30, 0, 100));
             kinr.Add("rlogic.ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
+            kinr.AddSeparator();
             
             foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && Program._Player.CanCast))
             {
