@@ -53,6 +53,10 @@ namespace Kindred
             kindraw.Add("draw.W", new CheckBox("Draw W Range", true));
             kindraw.Add("draw.E", new CheckBox("Draw E Range", true));
             kindraw.Add("draw.R", new CheckBox("Draw R Range", true));
+            kindraw.AddSeparator();
+            kindraw.AddGroupLabel("Pro Tips");
+            kindraw.AddSeparator();
+            kindraw.AddLabel(" - Uncheck the boxes if you wish to dont see a specific spell draw");
         }
 
         public static void kincombopage()
@@ -64,6 +68,7 @@ namespace Kindred
             kincombo.Add("combo.W", new CheckBox("Use W"));
             kincombo.Add("combo.E", new CheckBox("Use E"));
             kincombo.Add("combo.R", new CheckBox("Use R"));
+            kincombo.AddGroupLabel("Pro Tips");
             kincombo.AddSeparator();
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
 
@@ -84,6 +89,7 @@ namespace Kindred
             kinlcs.Add("jungle.Q", new CheckBox("Use Q jungle"));
             kinlcs.Add("jungle.W", new CheckBox("Use E jungle"));
             kinlcs.Add("jungle.E", new CheckBox("Use W jungle "));
+            kinlcs.AddGroupLabel("Pro Tips");
             kinlcs.AddSeparator();
             kinlcs.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
 
