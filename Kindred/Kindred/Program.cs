@@ -31,6 +31,7 @@ namespace Kindred
         public static Spell.Active W;
         public static Spell.Targeted E;
         public static Spell.Targeted R;
+        public static Spell.Targeted Ignite;
 
         static void Main(string[] args)
         {
@@ -39,6 +40,7 @@ namespace Kindred
             Drawing.OnDraw += GameOnDraw;
             Game.OnTick += GameOnTick;
             Gapcloser.OnGapcloser += AntiGapCloser;
+            Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
         }
 
 
@@ -116,11 +118,24 @@ namespace Kindred
             Rmenu = Kindred.AddSubMenu("R Menu", "kinr");
             Rmenu.AddGroupLabel("R Menu");
             Rmenu.Add("minhp", new Slider("Min. HP to use R", 30, 0, 100));
+            Rmenu.Add("ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
             foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && _Player.CanCast))
             {
                 if (ally.BaseSkinName == "KindredWolf") return;
                 Rmenu.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
+            Rmenu.AddSeparator();
+            Rmenu.AddGroupLabel("Protector Skill Whitelist");
+            Rmenu.Add("dprotector", new CheckBox("Disable Protector", false));
+            Rmenu.Add("hpprotector", new Slider("Min. Hp Protector", 30, 0, 100));
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Base>().Where(o=> o.IsEnemy))
+            {
+                foreach(var skillshot in SpellDB.SpellDatabase.Spells.Where(x => x.charName == enemy.BaseSkinName))
+                {
+                    Rmenu.Add("champ." + skillshot.spellName, new CheckBox(skillshot.spellName + "|" + skillshot.charName, true));
+                }
+            }
+
 
             Misc = Kindred.AddSubMenu("Misc Menu", "kinmisc");
             Misc.AddGroupLabel("AntiGap Closer -BETA");
@@ -333,15 +348,48 @@ namespace Kindred
         public static void RLogic()
         {
             var mHP = Rmenu["minhp"].Cast<Slider>().CurrentValue;
+            var eHP = Rmenu["ehp"].Cast<Slider>().CurrentValue;
 
             foreach (var ally in EntityManager.Heroes.Allies.Where(o => o.HealthPercent < mHP && !o.IsRecalling() && !o.IsDead && !o.IsZombie && _Player.Distance(o.Position) < R.Range && !o.IsInShopRange()))
             {
-                if (Rmenu["r" + ally.BaseSkinName].Cast<CheckBox>().CurrentValue && _Player.CountEnemiesInRange(1500) >= 1)
+                var enemy = EntityManager.Heroes.Enemies.Where(o => ally.Distance(o.Position) <= 800 && o.HealthPercent <= eHP).ToArray();
+                if (enemy.Length != 0) return;
+                
+
+                if (Rmenu["r" + ally.BaseSkinName].Cast<CheckBox>().CurrentValue && ally.CountEnemiesInRange(800) >= 1)
                 {
                     R.Cast(ally);
                 }
 
             }
+        }
+        public static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs spell)
+        {
+            var hp = Rmenu["hpprotector"].Cast<Slider>().CurrentValue;
+            if (!R.IsReady() && _Player.IsDead && _Player.IsZombie && sender.IsAlly && !sender.IsMe && !Rmenu["dprotector"].Cast<CheckBox>().CurrentValue) return;
+
+            if (sender is Obj_AI_Base && R.IsReady() && sender.IsEnemy && spell.SData.ConsideredAsAutoAttack == 1 && !sender.IsDead && !sender.IsZombie && sender.IsValidTarget(1000))
+            {
+                foreach(var protector in SpellDB.SpellDatabase.Spells.Where(x=> x.spellName == spell.SData.Name && Rmenu["champ." + x.spellName].Cast<CheckBox>().CurrentValue))
+                {
+                    if(protector.spellType == SpellDB.SpellType.Circular && _Player.Distance(spell.End) <= 200 && _Player.HealthPercent <= hp )
+                    {
+                        R.Cast(_Player);
+                    }
+                    if (protector.spellType == SpellDB.SpellType.Cone && _Player.Distance(spell.End) <= 200 && _Player.HealthPercent <= hp)
+                    {
+                        R.Cast(_Player);
+                    }
+                    if (protector.spellType == SpellDB.SpellType.Line && _Player.Distance(spell.End) <= 200 && _Player.HealthPercent <= hp)
+                    {
+                        R.Cast(_Player);
+                    }
+                }
+            
+
+            
+            }
+
         }
         
 
