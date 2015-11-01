@@ -204,7 +204,7 @@ namespace Kindred
             if (Orbwalker.IsAutoAttacking) return;
             Orbwalker.ForcedTarget = null;
             var count = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, Player.Instance.Position, W.Range).ToArray().Length;
-
+            if (count == 0) return;
 
             if (Q.IsReady() && KindredMenu.kinlcs["lc.MinionsQ"].Cast<Slider>().CurrentValue <= count  && KindredMenu.kinlcs["lc.Q"].Cast<CheckBox>().CurrentValue)
             {
