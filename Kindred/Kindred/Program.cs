@@ -182,17 +182,21 @@ namespace Kindred
             if (Q.IsReady() && KindredMenu.kincombo["combo.Q"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
                 Q.Cast(Game.ActiveCursorPos);
+                return;
             }
 
             if (W.State == SpellState.Ready && KindredMenu.kincombo["combo.W"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
             {
                 W.Cast();
+                return;
             }
 
             if (E.IsReady() && KindredMenu.kincombo["combo.E"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
                 E.Cast(alvo);
+                return;
             }
+            return;
         }
 
         public static void OnLaneClear()
