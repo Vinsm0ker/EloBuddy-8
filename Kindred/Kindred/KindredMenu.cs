@@ -75,10 +75,10 @@ namespace Kindred
             kinlcs = kindum.AddSubMenu("Lane Clear Settings", "laneclear");
             kinlcs.AddGroupLabel("Lane clear settings");
             kinlcs.Add("lc.Q", new CheckBox("Use Q"));
-            kinlcs.Add("lc.W", new CheckBox("Use W"));
+            kinlcs.Add("lc.W", new CheckBox("Use W",false));
             kinlcs.Add("lc.Mana", new Slider("Min. Mana%",30));
-            kinlcs.Add("lc.MinionsQ", new Slider("Min. Mana%", 3,0,3));
-            kinlcs.Add("lc.MinionsW", new Slider("Min. Mana%", 3,0,10));
+            kinlcs.Add("lc.MinionsQ", new Slider("Min. Minions for Q", 3,0,3));
+            kinlcs.Add("lc.MinionsW", new Slider("Min. Minions for W ", 3,0,10));
             kinlcs.AddSeparator();
             kinlcs.AddGroupLabel("Jungle Settings");
             kinlcs.Add("jungle.Q", new CheckBox("Use Q jungle"));

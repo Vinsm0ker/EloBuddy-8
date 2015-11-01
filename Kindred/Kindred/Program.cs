@@ -78,7 +78,7 @@ namespace Kindred
         private static void GameOnTick(EventArgs args)
         {
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo)) OnCombo();
-           // if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear)) OnJungle();
 
             KillSteal();
@@ -189,84 +189,52 @@ namespace Kindred
 
         public static void OnLaneClear()
         {
-            var Minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy,_Player.Position,540).Count();
-            var q = KindredMenu.kinlcs["lc.Q"].Cast<CheckBox>().CurrentValue;
-            var w = KindredMenu.kinlcs["lc.W"].Cast<CheckBox>().CurrentValue;
-            var mp = KindredMenu.kinlcs["lane.Mana"].Cast<Slider>().CurrentValue;
-            var min = KindredMenu.kinlcs["lane.MinionsQ"].Cast<Slider>().CurrentValue;
-            var wmin = KindredMenu.kinlcs["lane.MinionsW"].Cast<Slider>().CurrentValue;
-
-            if (Minions == 0) return;
-
-            if (_Player.ManaPercent < mp) return;
-
-            if (q && Q.IsReady() && Minions >= min)
-            {
-                Q.Cast(Game.CursorPos);
-            }
-
-            if (w && W.State == SpellState.Ready && Minions >= wmin)
-            {
-                W.Cast();
-            }
-
-        }
-
-        /*public static void OnJungle()
-        {
-            var q = KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue;
-            var w = KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue;
-            var e = KindredMenu.kinlcs["jungle.E"].Cast<CheckBox>().CurrentValue;
-            var monster = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.Position, W.Range).ToArray();
-
-
-
-            if (monster.Length == 0)
-            {
-                return;
-            }
-
-            //if (_Player.ManaPercent >= mana)
-            //{
-                if (Q.IsReady() && q )
-                {
-                    Q.Cast(Game.CursorPos);
-                }
-                if (W.State == SpellState.Ready && w) 
-                {
-                    W.Cast();
-                }
-                if (E.IsReady() && e)
-                {
-                    E.Cast(monster[0]);
-                }
-            //}
-
-
-
-        }*/
-
-        public static void OnJungle()
-        {
             if (Orbwalker.IsAutoAttacking) return;
             Orbwalker.ForcedTarget = null;
+            var count = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, Player.Instance.Position, W.Range).ToArray().Length;
 
-            var source = EntityManager.MinionsAndMonsters.GetJungleMonsters(Player.Instance.Position).OrderByDescending(a => a.MaxHealth).FirstOrDefault();
 
-            if (Q.IsReady() && KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < _Player.GetAutoAttackRange(source))
+            if (Q.IsReady() && KindredMenu.kinlcs["lc.MinionsQ"].Cast<Slider>().CurrentValue <= count  && KindredMenu.kinlcs["lc.Q"].Cast<CheckBox>().CurrentValue)
             {
                 Q.Cast(Game.ActiveCursorPos);
                 return;
             }
-            if (W.State == SpellState.Ready && KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) <= 700)
+            if (W.State == SpellState.Ready && KindredMenu.kinlcs["lc.W"].Cast<CheckBox>().CurrentValue && KindredMenu.kinlcs["lc.MinionsW"].Cast<Slider>().CurrentValue <= count)
             {
                 W.Cast();
                 return;
             }
+            return;
+
+        }
+
+        public static void OnJungle()
+        {
+            Orbwalker.ForcedTarget = null;
+
+            var source = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.ServerPosition).OrderByDescending(a => a.MaxHealth).FirstOrDefault();
+
+            if (source == null) return;
+            
+
+            if (Q.IsReady() && KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < Q.Range + 500)
+            {
+                Q.Cast(Game.ActiveCursorPos);
+                return;
+                
+            }
+            if (W.State == SpellState.Ready && KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) <= W.Range)
+            {
+                W.Cast();
+                return;
+                
+            }
             if (E.IsReady() && KindredMenu.kinlcs["jungle.E"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < E.Range)
             {
                 E.Cast(source);
+                return;
             }
+            return;
         }
 
         public static void KillSteal()
