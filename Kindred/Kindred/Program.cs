@@ -189,61 +189,52 @@ namespace Kindred
 
         public static void OnLaneClear()
         {
-            var Minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy,_Player.Position,540).Count();
-            var q = KindredMenu.kinlcs["lc.Q"].Cast<CheckBox>().CurrentValue;
-            var w = KindredMenu.kinlcs["lc.W"].Cast<CheckBox>().CurrentValue;
-            var mp = KindredMenu.kinlcs["lane.Mana"].Cast<Slider>().CurrentValue;
-            var min = KindredMenu.kinlcs["lane.MinionsQ"].Cast<Slider>().CurrentValue;
-            var wmin = KindredMenu.kinlcs["lane.MinionsW"].Cast<Slider>().CurrentValue;
+            if (Orbwalker.IsAutoAttacking) return;
+            Orbwalker.ForcedTarget = null;
+            var count = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, Player.Instance.Position, W.Range).ToArray().Length;
 
-            if (Minions == 0) return;
 
-            if (_Player.ManaPercent < mp) return;
-
-            if (q && Q.IsReady() && Minions >= min)
+            if (Q.IsReady() && KindredMenu.kinlcs["lc.MinionsQ"].Cast<Slider>().CurrentValue <= count  && KindredMenu.kinlcs["lc.Q"].Cast<CheckBox>().CurrentValue)
             {
-                Q.Cast(Game.CursorPos);
+                Q.Cast(Game.ActiveCursorPos);
+                return;
             }
-
-            if (w && W.State == SpellState.Ready && Minions >= wmin)
+            if (W.State == SpellState.Ready && KindredMenu.kinlcs["lc.W"].Cast<CheckBox>().CurrentValue && KindredMenu.kinlcs["lc.MinionsW"].Cast<Slider>().CurrentValue <= count)
             {
                 W.Cast();
+                return;
             }
+            return;
 
         }
 
         public static void OnJungle()
         {
-            var q = KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue;
-            var w = KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue;
-            var e = KindredMenu.kinlcs["jungle.E"].Cast<CheckBox>().CurrentValue;
-            var monster = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.Position, W.Range).ToArray();
+            Orbwalker.ForcedTarget = null;
 
+            var source = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.ServerPosition).OrderByDescending(a => a.MaxHealth).FirstOrDefault();
 
+            if (source == null) return;
+            
 
-            if (monster.Length == 0)
+            if (Q.IsReady() && KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < Q.Range + 500)
             {
+                Q.Cast(Game.ActiveCursorPos);
+                return;
+                
+            }
+            if (W.State == SpellState.Ready && KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) <= W.Range)
+            {
+                W.Cast();
+                return;
+                
+            }
+            if (E.IsReady() && KindredMenu.kinlcs["jungle.E"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < E.Range)
+            {
+                E.Cast(source);
                 return;
             }
-
-            //if (_Player.ManaPercent >= mana)
-            //{
-                if (Q.IsReady() && q )
-                {
-                    Q.Cast(Game.CursorPos);
-                }
-                if (W.State == SpellState.Ready && w) 
-                {
-                    W.Cast();
-                }
-                if (E.IsReady() && e)
-                {
-                    E.Cast(monster[0]);
-                }
-            //}
-
-
-
+            return;
         }
 
         public static void KillSteal()
