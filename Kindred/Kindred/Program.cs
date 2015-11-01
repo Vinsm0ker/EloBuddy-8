@@ -78,7 +78,7 @@ namespace Kindred
         private static void GameOnTick(EventArgs args)
         {
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo)) OnCombo();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
+           // if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear)) OnJungle();
 
             KillSteal();
@@ -212,7 +212,7 @@ namespace Kindred
 
         }
 
-        public static void OnJungle()
+        /*public static void OnJungle()
         {
             var q = KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue;
             var w = KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue;
@@ -244,6 +244,29 @@ namespace Kindred
 
 
 
+        }*/
+
+        public static void OnJungle()
+        {
+            if (Orbwalker.IsAutoAttacking) return;
+            Orbwalker.ForcedTarget = null;
+
+            var source = EntityManager.MinionsAndMonsters.GetJungleMonsters(Player.Instance.Position).OrderByDescending(a => a.MaxHealth).FirstOrDefault();
+
+            if (Q.IsReady() && KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < _Player.GetAutoAttackRange(source))
+            {
+                Q.Cast(Game.ActiveCursorPos);
+                return;
+            }
+            if (W.State == SpellState.Ready && KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) <= 700)
+            {
+                W.Cast();
+                return;
+            }
+            if (E.IsReady() && KindredMenu.kinlcs["jungle.E"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < E.Range)
+            {
+                E.Cast(source);
+            }
         }
 
         public static void KillSteal()
