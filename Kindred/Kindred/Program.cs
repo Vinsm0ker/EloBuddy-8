@@ -236,7 +236,7 @@ namespace Kindred
         {
             Orbwalker.ForcedTarget = null;
 
-            var source = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.ServerPosition).OrderByDescending(a => a.MaxHealth).FirstOrDefault();
+            var source = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.ServerPosition).OrderByDescending(a => a.MaxHealth).Where(a=> a.Distance(_Player) <= _Player.GetAutoAttackRange()).FirstOrDefault();
 
             if (source == null) return;
             
