@@ -11,8 +11,9 @@ namespace Kindred
 {
     class KindredItems
     {
+        public static Spell.Targeted ignite;
         public static Item youmus,botrk;
-        public void loadSpells()
+        public static void loadSpells()
         {
             if (ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Summoner1).Name.Contains("dot"))
                 ignite = new Spell.Targeted(SpellSlot.Summoner1, 580);
@@ -31,22 +32,9 @@ namespace Kindred
             k.ignite();
         }*/
 //In the program.cs we have to add also this 
-  public void ignite()
-        {
-            var autoIgnite = TargetSelector.GetTarget(KindredItems.ignite.Range, DamageType.True);
-            if (autoIgnite != null && autoIgnite.Health <= DamageLibrary.GetSpellDamage(Player.Instance, autoIgnite, KindredItems.ignite.Slot) || autoIgnite != null && autoIgnite.HealthPercent <= KindredMenu.spellsHealignite())
-                KindredItems.ignite.Cast(autoIgnite);
-        }
+  
 //In the Kindredmenu.cs we have to add this to the killsteal 
-spellsPage.AddGroupLabel("Ignite settings");
-            ks.Add("spells.Ignite.Focus", new Slider("Use Ignite when target HP is lower than (%)", 10, 1, 100));
-            ks.Add("spells.Ignite.Kill", new CheckBox("Use ignite if killable"));
-//
-public static float spellsHealignite()
-        {
-            return ks["spells.Ignite.Focus"].Cast<Slider>().CurrentValue;
-        }
-            
+
 
 
       

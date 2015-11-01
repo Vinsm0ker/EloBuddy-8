@@ -35,7 +35,7 @@ namespace Kindred
         public static Spell.Active W;
         public static Spell.Targeted E;
         public static Spell.Targeted R;
-        public static Spell.Targeted Ignite;
+        
 
         static void Main(string[] args)
         {
@@ -53,7 +53,9 @@ namespace Kindred
             Chat.Print("Kindred Dude Loaded!",Color.CornflowerBlue);
             Chat.Print("Enjoy the game and DONT FEED!",Color.CornflowerBlue);
             KindredMenu.loadMenu();
+            KindredItems.loadSpells();
             Game.OnTick += GameOnTick;
+            Game.OnUpdate += OnGameUpdate;
 
             #region Skill
 
@@ -81,7 +83,7 @@ namespace Kindred
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear)) OnJungle();
 
-            KillSteal();
+            //KillSteal();
             RLogic();
             //Activator();
 
@@ -98,6 +100,12 @@ namespace Kindred
 
         private static void OnGameUpdate(EventArgs args)
         {
+            
+            if (KindredItems.ignite != null)
+            {
+                ignite();
+            }
+                    
             
         }
 
@@ -272,6 +280,21 @@ namespace Kindred
 
             }
         }
+        public static void ignite()
+        {
+            if (!KindredMenu.ks["spell.Ignite.Use"].Cast<CheckBox>().CurrentValue) return;
+            var autoIgnite = TargetSelector.GetTarget(KindredItems.ignite.Range, DamageType.True);
+            if (autoIgnite != null  && KindredMenu.ks["spell.Ignite.Kill"].Cast<CheckBox>().CurrentValue)
+            {
+                if (autoIgnite.Health >= DamageLibrary.GetSpellDamage(Player.Instance, autoIgnite, KindredItems.ignite.Slot)) return;
+                KindredItems.ignite.Cast(autoIgnite);
+            }
+            else if(autoIgnite != null && autoIgnite.HealthPercent <= KindredMenu.spellsHealignite())
+            {
+                KindredItems.ignite.Cast(autoIgnite);
+            }
+                
+        }
         /*public static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs spell)
         {
             var hp = Rmenu["hpprotector"].Cast<Slider>().CurrentValue;
@@ -306,9 +329,10 @@ namespace Kindred
 
 
         }*/
-        
+
 
 
     }
 }
+
 
