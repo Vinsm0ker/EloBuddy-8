@@ -21,7 +21,7 @@ namespace Kindred
             //kinjcpage();
             kinlcspage();
             //kindrapage();
-            //kinkspage();
+            kinkspage();
             kinrpage();
 
         }
@@ -104,14 +104,33 @@ namespace Kindred
                 kinr.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
         }
-        public void kinkspage()
+        public static void kinkspage()
         {
             ks = kindum.AddSubMenu("KillSteal settings", "ks");
             ks.AddGroupLabel("KillSteal settings");
             ks.AddSeparator();
-            ks.Add("ksq", new CheckBox("Ks using Q"));
-            ks.Add("ksi", new CheckBox("Ks using Ignite[WIP]"));
+            ks.AddGroupLabel("Ignite settings");
+            ks.Add("spell.Ignite.Use", new CheckBox("Use Ignite for KillSteal"));
+            ks.AddSeparator();
+            ks.Add("spells.Ignite.Kill", new CheckBox("Use ignite only if killable"));
+            ks.Add("spells.Ignite.Focus", new Slider("Use Ignite when target HP is lower than (%)", 10, 1, 100));
+            
         }
+//
+        public static float spellsHealignite()
+        {
+            return ks["spells.Ignite.Focus"].Cast<Slider>().CurrentValue;
+        }
+        public static bool spellsIgniteOnlyHpLow()
+        {
+            return ks["spells.Ignite.Kill"].Cast<CheckBox>().CurrentValue;
+        }
+        public static bool spellsUseIgnite()
+        {
+            return ks["spells.Ignite.Use"].Cast<CheckBox>().CurrentValue;
+        }
+
+
 
 
 

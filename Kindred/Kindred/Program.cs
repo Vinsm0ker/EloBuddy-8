@@ -35,7 +35,7 @@ namespace Kindred
         public static Spell.Active W;
         public static Spell.Targeted E;
         public static Spell.Targeted R;
-        public static Spell.Targeted Ignite;
+        
 
         static void Main(string[] args)
         {
@@ -53,7 +53,9 @@ namespace Kindred
             Chat.Print("Kindred Dude Loaded!",Color.CornflowerBlue);
             Chat.Print("Enjoy the game and DONT FEED!",Color.CornflowerBlue);
             KindredMenu.loadMenu();
+            KindredItems.loadSpells();
             Game.OnTick += GameOnTick;
+            Game.OnUpdate += OnGameUpdate;
 
             #region Skill
 
@@ -81,7 +83,7 @@ namespace Kindred
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear)) OnJungle();
 
-            KillSteal();
+            //KillSteal();
             RLogic();
             //Activator();
 
@@ -98,6 +100,12 @@ namespace Kindred
 
         private static void OnGameUpdate(EventArgs args)
         {
+            
+            if (KindredItems.ignite != null)
+            {
+                ignite();
+            }
+                    
             
         }
 
@@ -174,17 +182,21 @@ namespace Kindred
             if (Q.IsReady() && KindredMenu.kincombo["combo.Q"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
                 Q.Cast(Game.ActiveCursorPos);
+                return;
             }
 
             if (W.State == SpellState.Ready && KindredMenu.kincombo["combo.W"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
             {
                 W.Cast();
+                return;
             }
 
             if (E.IsReady() && KindredMenu.kincombo["combo.E"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
                 E.Cast(alvo);
+                return;
             }
+            return;
         }
 
         public static void OnLaneClear()
@@ -192,7 +204,7 @@ namespace Kindred
             if (Orbwalker.IsAutoAttacking) return;
             Orbwalker.ForcedTarget = null;
             var count = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, Player.Instance.Position, W.Range).ToArray().Length;
-
+            if (count == 0) return;
 
             if (Q.IsReady() && KindredMenu.kinlcs["lc.MinionsQ"].Cast<Slider>().CurrentValue <= count  && KindredMenu.kinlcs["lc.Q"].Cast<CheckBox>().CurrentValue)
             {
@@ -272,6 +284,21 @@ namespace Kindred
 
             }
         }
+        public static void ignite()
+        {
+            if (!KindredMenu.ks["spell.Ignite.Use"].Cast<CheckBox>().CurrentValue) return;
+            var autoIgnite = TargetSelector.GetTarget(KindredItems.ignite.Range, DamageType.True);
+            if (autoIgnite != null  && KindredMenu.ks["spell.Ignite.Kill"].Cast<CheckBox>().CurrentValue)
+            {
+                if (autoIgnite.Health >= DamageLibrary.GetSpellDamage(Player.Instance, autoIgnite, KindredItems.ignite.Slot)) return;
+                KindredItems.ignite.Cast(autoIgnite);
+            }
+            else if(autoIgnite != null && autoIgnite.HealthPercent <= KindredMenu.spellsHealignite())
+            {
+                KindredItems.ignite.Cast(autoIgnite);
+            }
+                
+        }
         /*public static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs spell)
         {
             var hp = Rmenu["hpprotector"].Cast<Slider>().CurrentValue;
@@ -306,9 +333,10 @@ namespace Kindred
 
 
         }*/
-        
+
 
 
     }
 }
+
 
