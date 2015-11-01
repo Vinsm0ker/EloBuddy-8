@@ -197,7 +197,7 @@ namespace Kindred
                 E.Cast(alvo);
                 return;
             }
-            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUSShp()) && KindredActivator.youmus.IsReady())
+            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUShp()) && KindredActivator.youmus.IsReady())
             {
                 KindredActivator.youmus.Cast();
                 return;
@@ -298,18 +298,10 @@ namespace Kindred
         }
         public static void ignite()
         {
-            if (!KindredMenu.spellsPage["spell.Ignite.Use"].Cast<CheckBox>().CurrentValue) return;
             var autoIgnite = TargetSelector.GetTarget(KindredActivator.ignite.Range, DamageType.True);
-            if (autoIgnite != null  && KindredMenu.spellsPage["spell.Ignite.Kill"].Cast<CheckBox>().CurrentValue)
-            {
-                if (autoIgnite.Health >= DamageLibrary.GetSpellDamage(Player.Instance, autoIgnite, KindredActivator.ignite.Slot)) return;
+            if (autoIgnite != null && autoIgnite.Health <= DamageLibrary.GetSpellDamage(Player.Instance, autoIgnite, KindredActivator.ignite.Slot) || autoIgnite != null && autoIgnite.HealthPercent <= KindredMenu.spellsHealignite())
                 KindredActivator.ignite.Cast(autoIgnite);
-            }
-            else if(autoIgnite != null && autoIgnite.HealthPercent <= KindredMenu.spellsHealignite())
-            {
-                KindredActivator.ignite.Cast(autoIgnite);
-            }
-                
+
         }
         public static void Heal()
         {

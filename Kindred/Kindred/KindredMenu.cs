@@ -18,10 +18,8 @@ namespace Kindred
             kindudepage();
             kindrawpage();
             kincombopage();       
-            //kinjcpage();
             kinlcspage();
             kinrpage();
-            //kindrapage();
             Activator();
             
 
@@ -66,9 +64,9 @@ namespace Kindred
             kincombo.Add("combo.W", new CheckBox("Use W"));
             kincombo.Add("combo.E", new CheckBox("Use E"));
             kincombo.Add("combo.R", new CheckBox("Use R"));
-            kindum.Add("combo.Smite", new CheckBox("Use Smite"));
-            kindum.Add("combo.Botrk", new CheckBox("Use Botrk"));
-            kindum.Add("combo.Youmus", new CheckBox("Use Youmuss"));
+            kincombo.Add("combo.Smite", new CheckBox("Use Smite"));
+            kincombo.Add("combo.Botrk", new CheckBox("Use Botrk"));
+            kincombo.Add("combo.Youmus", new CheckBox("Use Youmuss"));
             kincombo.AddSeparator();
             kincombo.AddGroupLabel("Pro Tips");
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
@@ -132,6 +130,7 @@ namespace Kindred
             smitePage.Add("SRU_Krug", new CheckBox("Smite Golem"));
             smitePage.Add("Sru_Crab", new CheckBox("Smite Crab"));
             smitePage.AddSeparator();
+            spellsPage = kindum.AddSubMenu("Spells Settings");
             spellsPage.AddGroupLabel("Spells settings");
             spellsPage.AddSeparator();
             spellsPage.AddGroupLabel("Heal settings");
@@ -156,25 +155,25 @@ namespace Kindred
         }
 
 
-        public static float itemsYOUMUSShp()
+        public static float itemsYOUMUShp()
         {
             return itemsMenu["items.Youmuss.HP"].Cast<Slider>().CurrentValue;
         }
-        public static float itemsYOUMUSSenemys()
+        public static float itemsYOUMUSenemys()
         {
-            return kindum["items.Youmuss.Enemys"].Cast<Slider>().CurrentValue;
+            return itemsMenu["items.Youmuss.Enemys"].Cast<Slider>().CurrentValue;
         }
         public static float itemsBOTRKhp()
         {
-            return kindum["items.Botrk.HP"].Cast<Slider>().CurrentValue;
+            return itemsMenu["items.Botrk.HP"].Cast<Slider>().CurrentValue;
         }
         public static bool useBotrk()
         {
-            return kindum["combo.Botrk"].Cast<CheckBox>().CurrentValue;
+            return kincombo["combo.Botrk"].Cast<CheckBox>().CurrentValue;
         }
         public static bool useYoumuss()
         {
-            return kindum["combo.Youmus"].Cast<CheckBox>().CurrentValue;
+            return kincombo["combo.Youmus"].Cast<CheckBox>().CurrentValue;
         }
         public static float spellsHealhp()
         {

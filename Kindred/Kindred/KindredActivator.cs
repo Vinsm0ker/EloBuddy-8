@@ -13,7 +13,6 @@ namespace Kindred
     {
         public static Spell.Targeted ignite;
         public static Item youmus,botrk;
-        public static Spell.Skillshot privQ;
         public static Spell.Targeted smite;
         public static Spell.Active heal;
         public static void loadSpells()
@@ -37,14 +36,5 @@ namespace Kindred
         }
     }
 }
-        
-
-//To add in the Program
-//To add in Combo
-
-//To add in KindredMenu
-//In ComboPage
-           
-//Make a new page to the menu and declare the var 
         
 
