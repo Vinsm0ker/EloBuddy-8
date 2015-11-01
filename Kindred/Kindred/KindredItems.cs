@@ -21,17 +21,3 @@ namespace Kindred
         }
     }
 }
-
-//In the program.cs we have to add this on GameUpdate function
-/*public static void gameUpdate(EventArgs args)
-        {
-            if (KindredItems.ignite != null)
-            k.ignite();
-        }*/
-//In the program.cs we have to add also this 
-  
-//In the Kindredmenu.cs we have to add this to the killsteal 
-
-
-
-      
