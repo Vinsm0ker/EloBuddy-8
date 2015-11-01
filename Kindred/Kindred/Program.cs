@@ -53,7 +53,7 @@ namespace Kindred
             Chat.Print("Kindred Dude Loaded!",Color.CornflowerBlue);
             Chat.Print("Enjoy the game and DONT FEED!",Color.CornflowerBlue);
             KindredMenu.loadMenu();
-            KindredItems.loadSpells();
+            KindredActivator.loadSpells();
             Game.OnTick += GameOnTick;
             Game.OnUpdate += OnGameUpdate;
 
@@ -100,13 +100,14 @@ namespace Kindred
 
         private static void OnGameUpdate(EventArgs args)
         {
-            
-            if (KindredItems.ignite != null)
-            {
+            if (KindredActivator.smite != null)
+                smite();
+            if (KindredActivator.heal != null)
+                Heal();
+            if (KindredActivator.ignite != null)
                 ignite();
-            }
-                    
-            
+
+
         }
 
 
@@ -196,6 +197,17 @@ namespace Kindred
                 E.Cast(alvo);
                 return;
             }
+            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUSShp()) && KindredActivator.youmus.IsReady())
+            {
+                KindredActivator.youmus.Cast();
+                return;
+            }                
+            if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredActivator.botrk.IsReady())
+            {
+                KindredActivator.botrk.Cast(alvo);
+                return;
+            }
+                
             return;
         }
 
@@ -249,7 +261,7 @@ namespace Kindred
             return;
         }
 
-        public static void KillSteal()
+        /*public static void KillSteal()
         {
             var Target = TargetSelector.GetTarget(1500, DamageType.Physical);
             if (Target == null) return;
@@ -257,7 +269,7 @@ namespace Kindred
             var ap = _Player.FlatMagicDamageMod + _Player.BaseAbilityDamage;
             var ad = _Player.FlatMagicDamageMod + _Player.BaseAttackDamage;
 
-            var useq = KindredMenu.ks["ksq"].Cast<CheckBox>().CurrentValue;
+            var useq = KindredMenu.["ksq"].Cast<CheckBox>().CurrentValue;
             //var usei = Ks["ksi"].Cast<CheckBox>().CurrentValue;
 
             if (Q.IsReady() && useq && !Target.IsZombie && Target.Health < Damage.CalculateDamageOnUnit(_Player,Target,DamageType.Physical, 60 + ((Q.Level - 1) * 30) + ad/5))
@@ -265,7 +277,7 @@ namespace Kindred
                 Q.Cast(Target.Position);
 
             }
-        }
+        }*/
 
         public static void RLogic()
         {
@@ -286,18 +298,29 @@ namespace Kindred
         }
         public static void ignite()
         {
-            if (!KindredMenu.ks["spell.Ignite.Use"].Cast<CheckBox>().CurrentValue) return;
-            var autoIgnite = TargetSelector.GetTarget(KindredItems.ignite.Range, DamageType.True);
-            if (autoIgnite != null  && KindredMenu.ks["spell.Ignite.Kill"].Cast<CheckBox>().CurrentValue)
+            if (!KindredMenu.spellsPage["spell.Ignite.Use"].Cast<CheckBox>().CurrentValue) return;
+            var autoIgnite = TargetSelector.GetTarget(KindredActivator.ignite.Range, DamageType.True);
+            if (autoIgnite != null  && KindredMenu.spellsPage["spell.Ignite.Kill"].Cast<CheckBox>().CurrentValue)
             {
-                if (autoIgnite.Health >= DamageLibrary.GetSpellDamage(Player.Instance, autoIgnite, KindredItems.ignite.Slot)) return;
-                KindredItems.ignite.Cast(autoIgnite);
+                if (autoIgnite.Health >= DamageLibrary.GetSpellDamage(Player.Instance, autoIgnite, KindredActivator.ignite.Slot)) return;
+                KindredActivator.ignite.Cast(autoIgnite);
             }
             else if(autoIgnite != null && autoIgnite.HealthPercent <= KindredMenu.spellsHealignite())
             {
-                KindredItems.ignite.Cast(autoIgnite);
+                KindredActivator.ignite.Cast(autoIgnite);
             }
                 
+        }
+        public static void Heal()
+        {
+            if (KindredActivator.heal.IsReady() && Player.Instance.HealthPercent <= KindredMenu.spellsHealhp())
+                KindredActivator.heal.Cast();
+        }
+        public static void smite()
+        {
+            var unit = ObjectManager.Get<Obj_AI_Base>().Where(a => KindredMobs.MinionNames.Contains(a.BaseSkinName) && DamageLibrary.GetSummonerSpellDamage(Player.Instance, a, DamageLibrary.SummonerSpells.Smite) >= a.Health && KindredMenu.smitePage[a.BaseSkinName].Cast<CheckBox>().CurrentValue && KindredActivator.smite.IsInRange(a)).OrderByDescending(a => a.MaxHealth).FirstOrDefault();
+            if (unit != null && KindredActivator.smite.IsReady())
+                KindredActivator.smite.Cast(unit);
         }
         /*public static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs spell)
         {

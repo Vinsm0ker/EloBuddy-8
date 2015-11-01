@@ -12,7 +12,7 @@ namespace Kindred
 {
     class KindredMenu
     {
-        public static Menu kindum, kincombo, kindraw, kinr, ks, kinlcs;
+        public static Menu kindum, kincombo, kindraw, kinr, itemsMenu,smitePage,spellsPage, kinlcs;
         public static void loadMenu()
         {
             kindudepage();
@@ -20,9 +20,10 @@ namespace Kindred
             kincombopage();       
             //kinjcpage();
             kinlcspage();
-            //kindrapage();
-            kinkspage();
             kinrpage();
+            //kindrapage();
+            Activator();
+            
 
         }
 
@@ -65,6 +66,9 @@ namespace Kindred
             kincombo.Add("combo.W", new CheckBox("Use W"));
             kincombo.Add("combo.E", new CheckBox("Use E"));
             kincombo.Add("combo.R", new CheckBox("Use R"));
+            kindum.Add("combo.Smite", new CheckBox("Use Smite"));
+            kindum.Add("combo.Botrk", new CheckBox("Use Botrk"));
+            kindum.Add("combo.Youmus", new CheckBox("Use Youmuss"));
             kincombo.AddSeparator();
             kincombo.AddGroupLabel("Pro Tips");
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
@@ -104,33 +108,78 @@ namespace Kindred
                 kinr.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
         }
-        public static void kinkspage()
+        public static void Activator()
         {
-            ks = kindum.AddSubMenu("KillSteal settings", "ks");
-            ks.AddGroupLabel("KillSteal settings");
-            ks.AddSeparator();
-            ks.AddGroupLabel("Ignite settings");
-            ks.Add("spell.Ignite.Use", new CheckBox("Use Ignite for KillSteal"));
-            ks.AddSeparator();
-            ks.Add("spells.Ignite.Kill", new CheckBox("Use ignite only if killable"));
-            ks.Add("spells.Ignite.Focus", new Slider("Use Ignite when target HP is lower than (%)", 10, 1, 100));
-            
+            itemsMenu = kindum.AddSubMenu("Items Settings", "Items");
+            itemsMenu.AddGroupLabel("Items usage");
+            itemsMenu.AddSeparator();
+            itemsMenu.AddGroupLabel("Youmuss");
+            itemsMenu.Add("items.Youmuss.HP", new Slider("Use Youmuss if hp is lower than {0}(%)", 60, 1, 100));
+            itemsMenu.Add("items.Youmuss.Enemys", new Slider("Use Youmuss if {0} enemys in range", 2, 1, 5));
+            itemsMenu.AddSeparator();
+            itemsMenu.AddGroupLabel("Botrk");
+            itemsMenu.Add("items.Botrk.HP", new Slider("Use Botrk if hp is lower than {0}(%)", 30, 1, 100));
+            smitePage = kindum.AddSubMenu("Smite Settings", "Smite");
+            smitePage.AddGroupLabel("Smite settings");
+            smitePage.AddSeparator();
+            smitePage.Add("SRU_Red", new CheckBox("Smite Red"));
+            smitePage.Add("SRU_Blue", new CheckBox("Smite Blue"));
+            smitePage.Add("SRU_Dragon", new CheckBox("Smite Dragon"));
+            smitePage.Add("SRU_Baron", new CheckBox("Smite Baron"));
+            smitePage.Add("SRU_Gromp", new CheckBox("Smite Gromp"));
+            smitePage.Add("SRU_Murkwolf", new CheckBox("Smite Wolf"));
+            smitePage.Add("SRU_Razorbeak", new CheckBox("Smite Bird"));
+            smitePage.Add("SRU_Krug", new CheckBox("Smite Golem"));
+            smitePage.Add("Sru_Crab", new CheckBox("Smite Crab"));
+            smitePage.AddSeparator();
+            spellsPage.AddGroupLabel("Spells settings");
+            spellsPage.AddSeparator();
+            spellsPage.AddGroupLabel("Heal settings");
+            spellsPage.Add("spells.Heal.Hp", new Slider("Use Heal when HP is lower than {0}(%)", 30, 1, 100));
+            spellsPage.AddGroupLabel("Ignite settings");
+            spellsPage.Add("spell.Ignite.Use", new CheckBox("Use Ignite for KillSteal"));
+            spellsPage.Add("spells.Ignite.Focus", new Slider("Use Ignire when target HP isl lower than {0}(%)", 10, 1, 100));
+            spellsPage.Add("spells.Ignite.Kill", new CheckBox("Use ignite if killable"));
         }
-//
+        //
         public static float spellsHealignite()
         {
-            return ks["spells.Ignite.Focus"].Cast<Slider>().CurrentValue;
+            return spellsPage["spells.Ignite.Focus"].Cast<Slider>().CurrentValue;
         }
         public static bool spellsIgniteOnlyHpLow()
         {
-            return ks["spells.Ignite.Kill"].Cast<CheckBox>().CurrentValue;
+            return spellsPage["spells.Ignite.Kill"].Cast<CheckBox>().CurrentValue;
         }
         public static bool spellsUseIgnite()
         {
-            return ks["spells.Ignite.Use"].Cast<CheckBox>().CurrentValue;
+            return spellsPage["spells.Ignite.Use"].Cast<CheckBox>().CurrentValue;
         }
 
 
+        public static float itemsYOUMUSShp()
+        {
+            return itemsMenu["items.Youmuss.HP"].Cast<Slider>().CurrentValue;
+        }
+        public static float itemsYOUMUSSenemys()
+        {
+            return kindum["items.Youmuss.Enemys"].Cast<Slider>().CurrentValue;
+        }
+        public static float itemsBOTRKhp()
+        {
+            return kindum["items.Botrk.HP"].Cast<Slider>().CurrentValue;
+        }
+        public static bool useBotrk()
+        {
+            return kindum["combo.Botrk"].Cast<CheckBox>().CurrentValue;
+        }
+        public static bool useYoumuss()
+        {
+            return kindum["combo.Youmus"].Cast<CheckBox>().CurrentValue;
+        }
+        public static float spellsHealhp()
+        {
+            return spellsPage["spells.Heal.Hp"].Cast<Slider>().CurrentValue;
+        }
 
 
 
@@ -141,10 +190,6 @@ namespace Kindred
         public static int rLogicEnemyMinHp()
         {
             return kinr["rlogic.ehp"].Cast<Slider>().CurrentValue;
-        }
-        public static bool ksQ()
-        {
-            return ks["ksq"].Cast<CheckBox>().CurrentValue;
         }
         public static bool useWjungle()
         {

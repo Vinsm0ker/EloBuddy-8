@@ -55,7 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KindredItems.cs" />
+    <Compile Include="KindredMobs.cs" />
+    <Compile Include="KindredActivator.cs" />
     <Compile Include="KindredMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
