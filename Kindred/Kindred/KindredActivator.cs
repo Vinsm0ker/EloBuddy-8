@@ -31,8 +31,8 @@ namespace Kindred
                 heal = new Spell.Active(SpellSlot.Summoner1);
             else if (ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Summoner2).Name.Contains("heal"))
                 heal = new Spell.Active(SpellSlot.Summoner2);
-            youmus = new Item(3142);
-            botrk = new Item(3153, 500);
+            youmus = new Item(ItemId.Youmuus_Ghostblade);
+            botrk = new Item(ItemId.Blade_of_the_Ruined_King);
         }
     }
 }

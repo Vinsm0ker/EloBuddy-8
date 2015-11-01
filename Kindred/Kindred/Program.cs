@@ -51,10 +51,12 @@ namespace Kindred
             if (Player.Instance.ChampionName != "Kindred") return;
 
             Chat.Print("Kindred Dude Loaded!",Color.CornflowerBlue);
-            Chat.Print("Enjoy the game and DONT FEED!",Color.CornflowerBlue);
+            Chat.Print("Enjoy the game and DONT FEED!",Color.Red);
+
             KindredMenu.loadMenu();
             KindredActivator.loadSpells();
             Game.OnTick += GameOnTick;
+
             Game.OnUpdate += OnGameUpdate;
 
             #region Skill
@@ -199,12 +201,12 @@ namespace Kindred
             }
 
 
-            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUShp()) && KindredActivator.youmus.IsReady())
+            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUShp()) && KindredActivator.youmus.IsReady() && KindredActivator.youmus.IsOwned())
             {
                 KindredActivator.youmus.Cast();
                 return;
             }                
-            if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredActivator.botrk.IsReady())
+            if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredActivator.botrk.IsReady() && KindredActivator.botrk.IsOwned())
             {
                 KindredActivator.botrk.Cast(alvo);
                 return;
