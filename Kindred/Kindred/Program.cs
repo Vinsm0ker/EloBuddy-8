@@ -173,7 +173,6 @@ namespace Kindred
 
             if (Q.IsReady() && KindredMenu.kincombo["combo.Q"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
-                Chat.Print("Q");
                 Q.Cast(Game.ActiveCursorPos);
             }
 
