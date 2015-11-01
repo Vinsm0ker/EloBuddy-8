@@ -41,6 +41,7 @@ namespace Kindred
         {
             Loading.OnLoadingComplete += OnLoadingComplete;
             
+
         }
 
 
@@ -51,7 +52,7 @@ namespace Kindred
 
             Chat.Print("Kindred Dude Loaded!",Color.CornflowerBlue);
             Chat.Print("Enjoy the game and DONT FEED!",Color.CornflowerBlue);
-
+            KindredMenu.loadMenu();
             Game.OnTick += GameOnTick;
 
             #region Skill
@@ -63,7 +64,7 @@ namespace Kindred
 
             #endregion
 
-            KindredMenu.loadMenu();
+            
 
             Game.OnUpdate += OnGameUpdate;
             Drawing.OnDraw += GameOnDraw;
@@ -71,7 +72,7 @@ namespace Kindred
             Gapcloser.OnGapcloser += AntiGapCloser;
             //Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
 
-
+            
 
         }
         private static void GameOnTick(EventArgs args)
@@ -169,17 +170,19 @@ namespace Kindred
             var alvo = TargetSelector.GetTarget(1000, DamageType.Physical);
             if (alvo == null || !alvo.IsValid || alvo.IsDead || alvo.IsZombie || _Player.IsDead) return;
 
-            if (Q.IsReady() && KindredMenu.useQ() && alvo.Distance(_Player) <= 500)
+
+            if (Q.IsReady() && KindredMenu.kincombo["combo.Q"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
+                Chat.Print("Q");
                 Q.Cast(Game.ActiveCursorPos);
             }
 
-            if (W.State == SpellState.Ready && KindredMenu.useE() && alvo.Distance(_Player) <= 700)
+            if (W.State == SpellState.Ready && KindredMenu.kincombo["combo.W"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
             {
                 W.Cast();
             }
 
-            if (E.IsReady() && KindredMenu.useW() && alvo.Distance(_Player) <= 500)
+            if (E.IsReady() && KindredMenu.kincombo["combo.E"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
             {
                 E.Cast(alvo);
             }
@@ -188,8 +191,8 @@ namespace Kindred
         public static void OnLaneClear()
         {
             var Minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy,_Player.Position,540).Count();
-            var q = KindredMenu.useQlc();
-            var w = KindredMenu.useWlc();
+            var q = KindredMenu.kinlcs["lc.Q"].Cast<CheckBox>().CurrentValue;
+            var w = KindredMenu.kinlcs["lc.W"].Cast<CheckBox>().CurrentValue;
             var mp = KindredMenu.kinlcs["lane.Mana"].Cast<Slider>().CurrentValue;
             var min = KindredMenu.kinlcs["lane.MinionsQ"].Cast<Slider>().CurrentValue;
             var wmin = KindredMenu.kinlcs["lane.MinionsW"].Cast<Slider>().CurrentValue;
@@ -212,9 +215,9 @@ namespace Kindred
 
         public static void OnJungle()
         {
-            var q = KindredMenu.useQjungle();
-            var w = KindredMenu.useWjungle();
-            var e = KindredMenu.useEjungle();
+            var q = KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue;
+            var w = KindredMenu.kinlcs["jungle.W"].Cast<CheckBox>().CurrentValue;
+            var e = KindredMenu.kinlcs["jungle.E"].Cast<CheckBox>().CurrentValue;
             var monster = EntityManager.MinionsAndMonsters.GetJungleMonsters(_Player.Position, W.Range).ToArray();
 
 
@@ -252,7 +255,7 @@ namespace Kindred
             var ap = _Player.FlatMagicDamageMod + _Player.BaseAbilityDamage;
             var ad = _Player.FlatMagicDamageMod + _Player.BaseAttackDamage;
 
-            var useq = KindredMenu.ksQ();
+            var useq = KindredMenu.ks["ksq"].Cast<CheckBox>().CurrentValue;
             //var usei = Ks["ksi"].Cast<CheckBox>().CurrentValue;
 
             if (Q.IsReady() && useq && !Target.IsZombie && Target.Health < Damage.CalculateDamageOnUnit(_Player,Target,DamageType.Physical, 60 + ((Q.Level - 1) * 30) + ad/5))
@@ -264,8 +267,8 @@ namespace Kindred
 
         public static void RLogic()
         {
-            var mHP = KindredMenu.rLogicMinHp();
-            var eHP = KindredMenu.rLogicEnemyMinHp();
+            var mHP = KindredMenu.kinr["rlogic.minhp"].Cast<Slider>().CurrentValue;
+            var eHP = KindredMenu.kinr["rlogic.ehp"].Cast<Slider>().CurrentValue;
             foreach (var ally in EntityManager.Heroes.Allies.Where(o => o.HealthPercent < mHP && !o.IsRecalling() && !o.IsDead && !o.IsZombie && _Player.Distance(o.Position) < R.Range && !o.IsInShopRange()))
             {
                 var enemy = EntityManager.Heroes.Enemies.Where(o => ally.Distance(o.Position) <= 800 && o.HealthPercent <= eHP).ToArray();
