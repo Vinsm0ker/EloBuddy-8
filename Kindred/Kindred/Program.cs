@@ -1,4 +1,4 @@
-﻿using EloBuddy;
+using EloBuddy;
 using EloBuddy.SDK;
 using EloBuddy.SDK.Enumerations;
 using EloBuddy.SDK.Events;
@@ -28,14 +28,20 @@ namespace Kindred
 
 
         
-        public static Menu Kindred, Combo, Ks, LaneClear, Draw, Rmenu, Jungle, Misc;
-        public static string version = "1.0";
-
+        public static Menu Kindred, Combo, Ks, LaneClear, Draw, Rmenu, Jungle, miscmenu;
+        public static string version = "1.6";
+        public static AIHeroClient Target = null;
+        public static int qOff = 0, wOff = 0, eOff = 0, rOff = 0;
+        public static int[] AbilitySequence;
         public static Spell.Skillshot Q;
         public static Spell.Active W;
         public static Spell.Targeted E;
         public static Spell.Targeted R;
-        
+
+        public static bool HasSpell(string s)
+        {
+            return Player.Spells.FirstOrDefault(o => o.SData.Name.Contains(s)) != null;
+        }
 
         static void Main(string[] args)
         {
@@ -49,10 +55,10 @@ namespace Kindred
         private static void OnLoadingComplete(EventArgs args)
         {
             if (Player.Instance.ChampionName != "Kindred") return;
+            AbilitySequence = new int[] { 2, 1, 3, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
 
             Chat.Print("Kindred Dude Loaded!",Color.CornflowerBlue);
             Chat.Print("Enjoy the game and DONT FEED!",Color.Red);
-
             KindredMenu.loadMenu();
             KindredActivator.loadSpells();
             Game.OnTick += GameOnTick;
@@ -68,19 +74,22 @@ namespace Kindred
 
             #endregion
 
-            
+
 
             Game.OnUpdate += OnGameUpdate;
             Drawing.OnDraw += GameOnDraw;
 
             Gapcloser.OnGapcloser += AntiGapCloser;
+
+            //KindredMenu.miscpage["skin.Id"].Cast<Slider>().OnValueChange += ChangeDSkin;
             //Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
 
-            
+
 
         }
         private static void GameOnTick(EventArgs args)
         {
+            if (KindredMenu.miscmenu["lvlup"].Cast<CheckBox>().CurrentValue) LevelUpSpells();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo)) OnCombo();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear)) OnLaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear)) OnJungle();
@@ -108,6 +117,7 @@ namespace Kindred
                 Heal();
             if (KindredActivator.ignite != null)
                 ignite();
+        Player.SetSkinId(KindredMenu.skinId());
 
 
         }
@@ -173,10 +183,48 @@ namespace Kindred
 
         }
 
+        public static void Game_OnUpdate(EventArgs args)
+        { //AutoLevelup
+            
 
+            
+        }
+
+        public static void ChangeDSkin(Object sender, EventArgs args)
+        {
+            Player.SetSkinId(KindredMenu.skinId());
+        }
+
+
+        public static void LevelUpSpells()
+        {
+            int qL = _Player.Spellbook.GetSpell(SpellSlot.Q).Level + qOff;
+            int wL = _Player.Spellbook.GetSpell(SpellSlot.W).Level + wOff;
+            int eL = _Player.Spellbook.GetSpell(SpellSlot.E).Level + eOff;
+            int rL = _Player.Spellbook.GetSpell(SpellSlot.R).Level + rOff;
+            if (qL + wL + eL + rL < ObjectManager.Player.Level)
+            {
+                int[] level = new int[] { 0, 0, 0, 0 };
+                for (int i = 0; i < ObjectManager.Player.Level; i++)
+                {
+                    level[AbilitySequence[i] - 1] = level[AbilitySequence[i] - 1] + 1;
+                }
+                if (qL < level[0]) ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.Q);
+                if (wL < level[1]) ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.W);
+                if (eL < level[2]) ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.E);
+                if (rL < level[3]) ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.R);
+            }
+        }
 
         public static void OnCombo()
         {
+            Target = TargetSelector.GetTarget(700, DamageType.Magical);
+
+            if (Target != null)
+            {
+                if (Target.IsValidTarget())
+                {
+
 
             var alvo = TargetSelector.GetTarget(1000, DamageType.Physical);
             if (alvo == null || !alvo.IsValid || alvo.IsDead || alvo.IsZombie || _Player.IsDead) return;
@@ -205,15 +253,24 @@ namespace Kindred
             {
                 KindredActivator.youmus.Cast();
                 return;
-            }                
+            } 
+            if (Player.Instance.HealthPercent <= KindredMenu.itemsbilgewaterHp() && KindredActivator.bilgewater.IsReady() && KindredActivator.bilgewater.IsOwned())
+            {
+            KindredActivator.bilgewater.Cast(Target);
+            return;
+            }
+            
             if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredActivator.botrk.IsReady() && KindredActivator.botrk.IsOwned())
             {
-                KindredActivator.botrk.Cast(alvo);
+                KindredActivator.botrk.Cast(Target);
                 return;
             }
                 
             return;
         }
+            }
+            }
+
 
         public static void OnLaneClear()
         {
@@ -318,6 +375,29 @@ namespace Kindred
             if (unit != null && KindredActivator.smite.IsReady())
                 KindredActivator.smite.Cast(unit);
         }
+         public static void Flee()
+        {
+            var target = TargetSelector.GetTarget(ObjectManager.Player.AttackRange + Q.Range, DamageType.Physical);
+            if (target != null)
+            {
+                if (Q.IsReady() && KindredMenu.fleeSmart() && KindredMenu.MinmanaFlee() >= Player.Instance.ManaPercent)
+                {
+                    if (ObjectManager.Player.Distance(target.Position) <= ObjectManager.Player.GetAutoAttackRange() && Player.Instance.HealthPercent <= KindredMenu.minQcombo() || ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.minQaggresive())
+                        Player.CastSpell(SpellSlot.Q, -1 * (target.Position));
+                    else if (ObjectManager.Player.Distance(target.Position) >= (ObjectManager.Player.GetAutoAttackRange() + Q.Range))
+                        Player.CastSpell(SpellSlot.Q, target.Position);
+                    else
+                        Player.CastSpell(SpellSlot.Q, Game.ActiveCursorPos);
+                }
+            }
+            else
+            {
+               if (Q.IsReady() && KindredMenu.MinmanaFlee() >= Player.Instance.ManaPercent)
+                Player.CastSpell(SpellSlot.Q, Game.CursorPos);
+            }
+
+        }
+
         /*public static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs spell)
         {
             var hp = Rmenu["hpprotector"].Cast<Slider>().CurrentValue;
@@ -357,5 +437,6 @@ namespace Kindred
 
     }
 }
+
 
 
