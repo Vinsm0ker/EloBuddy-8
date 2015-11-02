@@ -12,7 +12,7 @@ namespace Kindred
     class KindredActivator
     {
         public static Spell.Targeted ignite;
-        public static Item youmus,botrk;
+        public static Item youmus,botrk,bilgewater;
         public static Spell.Targeted smite;
         public static Spell.Active heal;
         public static void loadSpells()
@@ -33,8 +33,10 @@ namespace Kindred
                 heal = new Spell.Active(SpellSlot.Summoner2);
             youmus = new Item(ItemId.Youmuus_Ghostblade);
             botrk = new Item(ItemId.Blade_of_the_Ruined_King);
+            bilgewater = new Item(3144, 550);
         }
     }
 }
         
+
 
