@@ -12,7 +12,7 @@ namespace Kindred
 {
     class KindredMenu
     {
-        public static Menu kindum, kincombo, kindraw, kinr, itemsMenu,smitePage,spellsPage, kinlcs;
+        public static Menu kindum, kincombo, kindraw, kinr, itemsMenu,smitePage,spellsPage, kinlcs, miscmenu;
         public static void loadMenu()
         {
             kindudepage();
@@ -21,6 +21,7 @@ namespace Kindred
             kinlcspage();
             kinrpage();
             Activator();
+            miscpage();
             
 
         }
@@ -115,8 +116,10 @@ namespace Kindred
             itemsMenu.Add("items.Youmuss.HP", new Slider("Use Youmuss if hp is lower than {0}(%)", 60, 1, 100));
             itemsMenu.Add("items.Youmuss.Enemys", new Slider("Use Youmuss if {0} enemys in range", 2, 1, 5));
             itemsMenu.AddSeparator();
-            itemsMenu.AddGroupLabel("Botrk");
+            itemsMenu.AddGroupLabel("Blade Of The Ruined King");
             itemsMenu.Add("items.Botrk.HP", new Slider("Use Botrk if hp is lower than {0}(%)", 30, 1, 100));
+            itemsMenu.AddGroupLabel("Bilgewater Cutlass");
+            itemsMenu.Add("items.bilgewater.HP", new Slider("Use Bilgewater cutlass if hp is lower than {0}(%)", 30, 1, 100));
             smitePage = kindum.AddSubMenu("Smite Settings", "Smite");
             smitePage.AddGroupLabel("Smite settings");
             smitePage.AddSeparator();
@@ -140,6 +143,50 @@ namespace Kindred
             spellsPage.Add("spells.Ignite.Focus", new Slider("Use Ignire when target HP isl lower than {0}(%)", 10, 1, 100));
             spellsPage.Add("spells.Ignite.Kill", new CheckBox("Use ignite if killable"));
         }
+        public static void miscpage()
+        {
+            miscmenu = kindum.AddSubMenu("Misc Menu", "othermenu");
+            miscmenu.AddGroupLabel("Misc Menu");
+            miscmenu.Add("lvlup", new CheckBox("Auto Level Up Spells", false));
+            miscmenu.AddSeparator();
+            miscmenu.AddGroupLabel("Skin settings");
+            miscmenu.Add("skin.Id", new Slider("Skin Editor", 0, 0, 1));
+            miscmenu.AddSeparator();
+            miscmenu.AddGroupLabel("Flee settings");
+            miscmenu.Add("flee.Smart.Q", new CheckBox("Smart Flee"));
+            miscmenu.AddSeparator();
+            miscmenu.AddGroupLabel("Safety Settings");
+            miscmenu.Add("flee.Min.Mana", new Slider("Min mana for using Q Spell", 30, 1, 100));
+            miscmenu.Add("combo.Qmin", new Slider("Play safe when Hp (%) is lower than", 60, 1, 100));
+            miscmenu.Add("combo.QminAG", new Slider("Play safe when enemys in range", 3, 1, 5));
+        }
+        public static float itemsbilgewaterHp()
+        {
+            return itemsMenu["items.bilgewater.HP"].Cast<Slider>().CurrentValue;
+        }
+        public static float minQaggresive()
+        {
+            return miscmenu["combo.QminAG"].Cast<Slider>().CurrentValue;
+        }
+        public static float minQcombo()
+        {
+            return miscmenu["combo.Qmin"].Cast<Slider>().CurrentValue;
+        }
+
+        public static bool fleeSmart()
+        {
+            return miscmenu["flee.Smart.Q"].Cast<CheckBox>().CurrentValue;
+        }
+        public static float MinmanaFlee()
+        {
+            return miscmenu["flee.Min.Mana"].Cast<Slider>().CurrentValue;
+        }
+        public static int skinId()
+        {
+            return miscmenu["skin.Id"].Cast<Slider>().CurrentValue;
+        }
+            
+
         //
         public static float spellsHealignite()
         {
@@ -253,4 +300,5 @@ namespace Kindred
         }
     }
 }
+
 
