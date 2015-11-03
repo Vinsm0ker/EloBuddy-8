@@ -61,13 +61,14 @@ namespace Kindred
         {
             kincombo = kindum.AddSubMenu("Combo settings", "Combo");
             kincombo.AddGroupLabel("Combo settings");
-            kincombo.Add("combo.Q", new CheckBox("Use Q"));
-            kincombo.Add("combo.W", new CheckBox("Use W"));
-            kincombo.Add("combo.E", new CheckBox("Use E"));
-            kincombo.Add("combo.R", new CheckBox("Use R"));
+            kincombo.Add("combo.Q", new CheckBox("Use Q Spell"));
+            kincombo.Add("combo.W", new CheckBox("Use W Spell"));
+            kincombo.Add("combo.E", new CheckBox("Use E Spell"));
+            kincombo.Add("combo.R", new CheckBox("Use R Spell"));
             kincombo.Add("combo.Smite", new CheckBox("Use Smite"));
-            kincombo.Add("combo.Botrk", new CheckBox("Use Botrk"));
+            kincombo.Add("combo.Botrk", new CheckBox("Use Blade of the ruined king"));
             kincombo.Add("combo.Youmus", new CheckBox("Use Youmuss"));
+            kincombo.Add("combo.Bilgewater", new CheckBox("Use Bilgewater Cutlass"));
             kincombo.AddSeparator();
             kincombo.AddGroupLabel("Pro Tips");
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
@@ -77,16 +78,16 @@ namespace Kindred
         {
             kinlcs = kindum.AddSubMenu("Lane Clear Settings", "laneclear");
             kinlcs.AddGroupLabel("Lane clear settings");
-            kinlcs.Add("lc.Q", new CheckBox("Use Q"));
-            kinlcs.Add("lc.W", new CheckBox("Use W",false));
+            kinlcs.Add("lc.Q", new CheckBox("Use Q Spell"));
+            kinlcs.Add("lc.W", new CheckBox("Use W Spell",false));
             kinlcs.Add("lc.Mana", new Slider("Min. Mana%",30));
             kinlcs.Add("lc.MinionsQ", new Slider("Min. Minions for Q", 3,0,3));
             kinlcs.Add("lc.MinionsW", new Slider("Min. Minions for W ", 3,0,10));
             kinlcs.AddSeparator();
             kinlcs.AddGroupLabel("Jungle Settings");
-            kinlcs.Add("jungle.Q", new CheckBox("Use Q jungle"));
-            kinlcs.Add("jungle.W", new CheckBox("Use E jungle"));
-            kinlcs.Add("jungle.E", new CheckBox("Use W jungle "));
+            kinlcs.Add("jungle.Q", new CheckBox("Use Q Spell in Jungle"));
+            kinlcs.Add("jungle.W", new CheckBox("Use E Spell in Jungle"));
+            kinlcs.Add("jungle.E", new CheckBox("Use W Spell in Jungle "));
             kinlcs.AddSeparator();
             kinlcs.AddGroupLabel("Pro Tips");
             kinlcs.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Jungle/LaneClear Key");
@@ -97,8 +98,8 @@ namespace Kindred
             kinr = kindum.AddSubMenu("Ultimate Menu", "rlogic");
             kinr.AddGroupLabel("Lamb's Respite Menu");
             kinr.AddSeparator();
-            kinr.Add("rlogic.minhp", new Slider("Min. HP to use R", 30, 0, 100));
-            kinr.Add("rlogic.ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
+            kinr.Add("rlogic.minhp", new Slider("Min. HP to use Lamb's Respite", 30, 0, 100));
+            kinr.Add("rlogic.ehp", new Slider("Max enemy hp to use Lamb's Respite", 10, 0, 100));
             kinr.AddSeparator();
             
             foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && Program._Player.CanCast))
@@ -106,6 +107,8 @@ namespace Kindred
                 if (ally.BaseSkinName == "kindredwolf" || ally.BaseSkinName == "KindredWolf") return;
                 kinr.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
+            kinr.AddGroupLabel("Pro Tips");
+            kinr.AddLabel(" -Remember to play safe and don't be a teemo");
         }
         public static void Activator()
         {
@@ -123,8 +126,8 @@ namespace Kindred
             smitePage = kindum.AddSubMenu("Smite Settings", "Smite");
             smitePage.AddGroupLabel("Smite settings");
             smitePage.AddSeparator();
-            smitePage.Add("SRU_Red", new CheckBox("Smite Red"));
-            smitePage.Add("SRU_Blue", new CheckBox("Smite Blue"));
+            smitePage.Add("SRU_Red", new CheckBox("Smite Red Buff"));
+            smitePage.Add("SRU_Blue", new CheckBox("Smite Blue Buff"));
             smitePage.Add("SRU_Dragon", new CheckBox("Smite Dragon"));
             smitePage.Add("SRU_Baron", new CheckBox("Smite Baron"));
             smitePage.Add("SRU_Gromp", new CheckBox("Smite Gromp"));
@@ -142,6 +145,7 @@ namespace Kindred
             spellsPage.Add("spell.Ignite.Use", new CheckBox("Use Ignite for KillSteal"));
             spellsPage.Add("spells.Ignite.Focus", new Slider("Use Ignire when target HP isl lower than {0}(%)", 10, 1, 100));
             spellsPage.Add("spells.Ignite.Kill", new CheckBox("Use ignite if killable"));
+
         }
         public static void miscpage()
         {
@@ -213,6 +217,10 @@ namespace Kindred
         public static float itemsBOTRKhp()
         {
             return itemsMenu["items.Botrk.HP"].Cast<Slider>().CurrentValue;
+        }
+        public static bool useBilgewater()
+        {
+            return kincombo["combo.Bilgewater"].Cast<CheckBox>().CurrentValue;
         }
         public static bool useBotrk()
         {
