@@ -78,6 +78,7 @@ namespace Kindred
 
             Game.OnUpdate += OnGameUpdate;
             Drawing.OnDraw += GameOnDraw;
+            Drawing.OnDraw += OnDamageDraw;
 
             Gapcloser.OnGapcloser += AntiGapCloser;
 
@@ -172,15 +173,63 @@ namespace Kindred
 
                     new Circle() { Color = Color.SkyBlue, Radius = 500, BorderWidth = 2f }.Draw(_Player.Position);
                 }
-
             }
 
 
 
+        }
+
+        public static void OnDamageDraw(EventArgs args)
+        {
 
 
 
+            var drawingsC = true;
+            if (KindredMenu.nodraw()) return;
 
+            if (drawingsC)
+            {
+                foreach (var ai in EntityManager.Heroes.Enemies.Where(e => e.Distance(_Player) <= 1000))
+                {
+                    if (ai == null || ai.IsDead || ai.IsZombie) return;
+
+
+                    if (ComboDamage(ai) >= ai.Health)
+                    {
+                        var killableText = new Text("", new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold));
+                        killableText.Position = Drawing.WorldToScreen(ai.Position) - new Vector2(40, -40);
+                        killableText.Color = Color.Red;
+                        killableText.TextValue = "FULL COMBO TO KILL";
+                        killableText.Draw();
+
+                       
+
+                        
+                    }
+                }
+            }
+        }
+
+        public static float ComboDamage(Obj_AI_Base target)
+        {
+            var damage = 0d;
+
+            if (Q.IsReady(10) && KindredMenu.kindraw["draw.combo.q"].Cast<CheckBox>().CurrentValue)
+            {
+                damage += _Player.GetSpellDamage(target, SpellSlot.Q);
+            }
+
+            if (E.IsReady(5) && KindredMenu.kindraw["draw.combo.e"].Cast<CheckBox>().CurrentValue  || target.HasBuff("kindredecharge") && KindredMenu.kindraw["draw.combo.e"].Cast<CheckBox>().CurrentValue)
+            {
+                damage += _Player.CalculateDamageOnUnit(target, DamageType.Physical, (float)(80 + (30 * (E.Level - 1)) + (target.HealthPercent * 0.05) + ((_Player.BaseAttackDamage + _Player.FlatPhysicalDamageMod) * 0.3 )));
+            }
+
+            damage += (_Player.GetAutoAttackDamage(target) + target.HealthPercent * (0.0125 * _Player.GetBuffCount("kindredmarkofthekindredstackcounter")))*KindredMenu.kindraw["draw.combo.aa"].Cast<Slider>().CurrentValue;
+
+            
+
+
+            return (float)damage;
         }
 
         public static void Game_OnUpdate(EventArgs args)
@@ -226,50 +275,50 @@ namespace Kindred
                 {
 
 
-            var alvo = TargetSelector.GetTarget(1000, DamageType.Physical);
-            if (alvo == null || !alvo.IsValid || alvo.IsDead || alvo.IsZombie || _Player.IsDead) return;
+                    var alvo = TargetSelector.GetTarget(1000, DamageType.Physical);
+                    if (alvo == null || !alvo.IsValid || alvo.IsDead || alvo.IsZombie || _Player.IsDead) return;
 
 
-            if (E.IsReady() && KindredMenu.kincombo["combo.E"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
-            {
-                E.Cast(alvo);
-                
-            }
-            
-            if (W.State == SpellState.Ready && KindredMenu.kincombo["combo.W"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
-            {
-                W.Cast();
-                
-            }
+                    if (E.IsReady() && KindredMenu.kincombo["combo.E"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 500)
+                    {
+                        E.Cast(alvo);
 
-            if (Q.IsReady() && KindredMenu.kincombo["combo.Q"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= Q.Range + 500)
-            {
-                Player.CastSpell(SpellSlot.Q, Game.CursorPos);
-                
-            }
+                    }
+
+                    if (W.State == SpellState.Ready && KindredMenu.kincombo["combo.W"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= 700)
+                    {
+                        W.Cast();
+
+                    }
+
+                    if (Q.IsReady() && KindredMenu.kincombo["combo.Q"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= Q.Range + 500)
+                    {
+                        Player.CastSpell(SpellSlot.Q, Game.CursorPos);
+
+                    }
 
 
-            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUShp()) && KindredActivator.youmus.IsReady() && KindredMenu.kincombo["combo.Youmuss"].Cast<CheckBox>().CurrentValue && KindredActivator.youmus.IsOwned())
-            {
-                KindredActivator.youmus.Cast();
-                return;
-            } 
-            if (Player.Instance.HealthPercent <= KindredMenu.itemsbilgewaterHp() && KindredMenu.kincombo["combo.Bilgewater"].Cast<CheckBox>().CurrentValue && KindredActivator.bilgewater.IsReady() && KindredActivator.bilgewater.IsOwned())
-            {
-            KindredActivator.bilgewater.Cast(Target);
-            return;
+                    if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUShp()) && KindredActivator.youmus.IsReady() && KindredMenu.kincombo["combo.Youmuss"].Cast<CheckBox>().CurrentValue && KindredActivator.youmus.IsOwned())
+                    {
+                        KindredActivator.youmus.Cast();
+                        return;
+                    }
+                    if (Player.Instance.HealthPercent <= KindredMenu.itemsbilgewaterHp() && KindredMenu.kincombo["combo.Bilgewater"].Cast<CheckBox>().CurrentValue && KindredActivator.bilgewater.IsReady() && KindredActivator.bilgewater.IsOwned())
+                    {
+                        KindredActivator.bilgewater.Cast(Target);
+                        return;
+                    }
+
+                    if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredMenu.kincombo["combo.Botrk"].Cast<CheckBox>().CurrentValue && KindredActivator.botrk.IsReady() && KindredActivator.botrk.IsOwned())
+                    {
+                        KindredActivator.botrk.Cast(Target);
+                        return;
+                    }
+
+                    return;
+                }
             }
-            
-            if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredMenu.kincombo["combo.Botrk"].Cast<CheckBox>().CurrentValue && KindredActivator.botrk.IsReady() && KindredActivator.botrk.IsOwned())
-            {
-                KindredActivator.botrk.Cast(Target);
-                return;
-            }
-                
-            return;
         }
-            }
-            }
 
 
         public static void OnLaneClear()

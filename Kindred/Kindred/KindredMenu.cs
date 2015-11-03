@@ -53,6 +53,11 @@ namespace Kindred
             kindraw.Add("draw.E", new CheckBox("Draw E Range", true));
             kindraw.Add("draw.R", new CheckBox("Draw R Range", true));
             kindraw.AddSeparator();
+            kindraw.AddGroupLabel("Combo Damage Draw");
+            kindraw.Add("draw.combo.q", new CheckBox("Use Q Damage to Calculate"));
+            kindraw.Add("draw.combo.e", new CheckBox("Use E Damage to Calculate"));
+            kindraw.Add("draw.combo.aa", new Slider("Use {0} AA to Calculate",2,1,5));
+            kindraw.AddSeparator();
             kindraw.AddGroupLabel("Pro Tips");
             kindraw.AddLabel(" - Uncheck the boxes if you wish to dont see a specific spell draw");
         }
