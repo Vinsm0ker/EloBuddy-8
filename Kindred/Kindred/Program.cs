@@ -249,18 +249,18 @@ namespace Kindred
             }
 
 
-            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUShp()) && KindredActivator.youmus.IsReady() && KindredActivator.youmus.IsOwned())
+            if ((ObjectManager.Player.CountEnemiesInRange(ObjectManager.Player.AttackRange) >= KindredMenu.itemsYOUMUSenemys() || Player.Instance.HealthPercent >= KindredMenu.itemsYOUMUShp()) && KindredActivator.youmus.IsReady() && KindredMenu.kincombo["combo.Youmuss"].Cast<CheckBox>().CurrentValue && KindredActivator.youmus.IsOwned())
             {
                 KindredActivator.youmus.Cast();
                 return;
             } 
-            if (Player.Instance.HealthPercent <= KindredMenu.itemsbilgewaterHp() && KindredActivator.bilgewater.IsReady() && KindredActivator.bilgewater.IsOwned())
+            if (Player.Instance.HealthPercent <= KindredMenu.itemsbilgewaterHp() && KindredMenu.kincombo["combo.Bilgewater"].Cast<CheckBox>().CurrentValue && KindredActivator.bilgewater.IsReady() && KindredActivator.bilgewater.IsOwned())
             {
             KindredActivator.bilgewater.Cast(Target);
             return;
             }
             
-            if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredActivator.botrk.IsReady() && KindredActivator.botrk.IsOwned())
+            if (Player.Instance.HealthPercent <= KindredMenu.itemsBOTRKhp() && KindredMenu.kincombo["combo.Botrk"].Cast<CheckBox>().CurrentValue && KindredActivator.botrk.IsReady() && KindredActivator.botrk.IsOwned())
             {
                 KindredActivator.botrk.Cast(Target);
                 return;
