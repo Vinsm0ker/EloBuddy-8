@@ -244,7 +244,7 @@ namespace Kindred
 
             if (Q.IsReady() && KindredMenu.kincombo["combo.Q"].Cast<CheckBox>().CurrentValue && alvo.Distance(_Player) <= Q.Range + 500)
             {
-                Q.Cast(Game.ActiveCursorPos);
+                Player.CastSpell(SpellSlot.Q, Game.CursorPos);
                 
             }
 
