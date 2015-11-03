@@ -12,17 +12,17 @@ namespace Kindred
 {
     class KindredMenu
     {
-        public static Menu kindum, kincombo, kindraw, kinr, ks, kinlcs;
+        public static Menu kindum, kincombo, kindraw, kinr, itemsMenu,smitePage,spellsPage, kinlcs, miscmenu;
         public static void loadMenu()
         {
             kindudepage();
             kindrawpage();
             kincombopage();       
-            //kinjcpage();
             kinlcspage();
-            //kindrapage();
-            //kinkspage();
             kinrpage();
+            Activator();
+            miscpage();
+            
 
         }
 
@@ -52,21 +52,23 @@ namespace Kindred
             kindraw.Add("draw.W", new CheckBox("Draw W Range", true));
             kindraw.Add("draw.E", new CheckBox("Draw E Range", true));
             kindraw.Add("draw.R", new CheckBox("Draw R Range", true));
-            kindraw.Add("wallJumpKey", new KeyBind("Wall Jump Key", false, KeyBind.BindTypes.HoldActive, 'Z'));
             kindraw.AddSeparator();
             kindraw.AddGroupLabel("Pro Tips");
             kindraw.AddLabel(" - Uncheck the boxes if you wish to dont see a specific spell draw");
-            kindraw.AddLabel(" - If you wish another key instead of Z for WallJump just change it");
         }
 
         public static void kincombopage()
         {
             kincombo = kindum.AddSubMenu("Combo settings", "Combo");
             kincombo.AddGroupLabel("Combo settings");
-            kincombo.Add("combo.Q", new CheckBox("Use Q"));
-            kincombo.Add("combo.W", new CheckBox("Use W"));
-            kincombo.Add("combo.E", new CheckBox("Use E"));
-            kincombo.Add("combo.R", new CheckBox("Use R"));
+            kincombo.Add("combo.Q", new CheckBox("Use Q Spell"));
+            kincombo.Add("combo.W", new CheckBox("Use W Spell"));
+            kincombo.Add("combo.E", new CheckBox("Use E Spell"));
+            kincombo.Add("combo.R", new CheckBox("Use R Spell"));
+            kincombo.Add("combo.Smite", new CheckBox("Use Smite"));
+            kincombo.Add("combo.Botrk", new CheckBox("Use Blade of the ruined king"));
+            kincombo.Add("combo.Youmus", new CheckBox("Use Youmuss"));
+            kincombo.Add("combo.Bilgewater", new CheckBox("Use Bilgewater Cutlass"));
             kincombo.AddSeparator();
             kincombo.AddGroupLabel("Pro Tips");
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
@@ -76,16 +78,16 @@ namespace Kindred
         {
             kinlcs = kindum.AddSubMenu("Lane Clear Settings", "laneclear");
             kinlcs.AddGroupLabel("Lane clear settings");
-            kinlcs.Add("lc.Q", new CheckBox("Use Q"));
-            kinlcs.Add("lc.W", new CheckBox("Use W"));
+            kinlcs.Add("lc.Q", new CheckBox("Use Q Spell"));
+            kinlcs.Add("lc.W", new CheckBox("Use W Spell",false));
             kinlcs.Add("lc.Mana", new Slider("Min. Mana%",30));
-            kinlcs.Add("lc.MinionsQ", new Slider("Min. Mana%", 3,0,3));
-            kinlcs.Add("lc.MinionsW", new Slider("Min. Mana%", 3,0,10));
+            kinlcs.Add("lc.MinionsQ", new Slider("Min. Minions for Q", 3,0,3));
+            kinlcs.Add("lc.MinionsW", new Slider("Min. Minions for W ", 3,0,10));
             kinlcs.AddSeparator();
             kinlcs.AddGroupLabel("Jungle Settings");
-            kinlcs.Add("jungle.Q", new CheckBox("Use Q jungle"));
-            kinlcs.Add("jungle.W", new CheckBox("Use E jungle"));
-            kinlcs.Add("jungle.E", new CheckBox("Use W jungle "));
+            kinlcs.Add("jungle.Q", new CheckBox("Use Q Spell in Jungle"));
+            kinlcs.Add("jungle.W", new CheckBox("Use E Spell in Jungle"));
+            kinlcs.Add("jungle.E", new CheckBox("Use W Spell in Jungle "));
             kinlcs.AddSeparator();
             kinlcs.AddGroupLabel("Pro Tips");
             kinlcs.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Jungle/LaneClear Key");
@@ -96,8 +98,8 @@ namespace Kindred
             kinr = kindum.AddSubMenu("Ultimate Menu", "rlogic");
             kinr.AddGroupLabel("Lamb's Respite Menu");
             kinr.AddSeparator();
-            kinr.Add("rlogic.minhp", new Slider("Min. HP to use R", 30, 0, 100));
-            kinr.Add("rlogic.ehp", new Slider("Max enemy hp to use R", 10, 0, 100));
+            kinr.Add("rlogic.minhp", new Slider("Min. HP to use Lamb's Respite", 30, 0, 100));
+            kinr.Add("rlogic.ehp", new Slider("Max enemy hp to use Lamb's Respite", 10, 0, 100));
             kinr.AddSeparator();
             
             foreach (var ally in ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsAlly && !o.IsStructure() && !o.IsMinion && Program._Player.CanCast))
@@ -105,14 +107,132 @@ namespace Kindred
                 if (ally.BaseSkinName == "kindredwolf" || ally.BaseSkinName == "KindredWolf") return;
                 kinr.Add("r" + ally.BaseSkinName, new CheckBox("R on " + ally.BaseSkinName, true));
             }
+            kinr.AddGroupLabel("Pro Tips");
+            kinr.AddLabel(" -Remember to play safe and don't be a teemo");
         }
-        public void kinkspage()
+        public static void Activator()
         {
-            ks = kindum.AddSubMenu("KillSteal settings", "ks");
-            ks.AddGroupLabel("KillSteal settings");
-            ks.AddSeparator();
-            ks.Add("ksq", new CheckBox("Ks using Q"));
-            ks.Add("ksi", new CheckBox("Ks using Ignite[WIP]"));
+            itemsMenu = kindum.AddSubMenu("Items Settings", "Items");
+            itemsMenu.AddGroupLabel("Items usage");
+            itemsMenu.AddSeparator();
+            itemsMenu.AddGroupLabel("Youmuss");
+            itemsMenu.Add("items.Youmuss.HP", new Slider("Use Youmuss if hp is lower than {0}(%)", 60, 1, 100));
+            itemsMenu.Add("items.Youmuss.Enemys", new Slider("Use Youmuss if {0} enemys in range", 2, 1, 5));
+            itemsMenu.AddSeparator();
+            itemsMenu.AddGroupLabel("Blade Of The Ruined King");
+            itemsMenu.Add("items.Botrk.HP", new Slider("Use Botrk if hp is lower than {0}(%)", 30, 1, 100));
+            itemsMenu.AddGroupLabel("Bilgewater Cutlass");
+            itemsMenu.Add("items.bilgewater.HP", new Slider("Use Bilgewater cutlass if hp is lower than {0}(%)", 30, 1, 100));
+            smitePage = kindum.AddSubMenu("Smite Settings", "Smite");
+            smitePage.AddGroupLabel("Smite settings");
+            smitePage.AddSeparator();
+            smitePage.Add("SRU_Red", new CheckBox("Smite Red Buff"));
+            smitePage.Add("SRU_Blue", new CheckBox("Smite Blue Buff"));
+            smitePage.Add("SRU_Dragon", new CheckBox("Smite Dragon"));
+            smitePage.Add("SRU_Baron", new CheckBox("Smite Baron"));
+            smitePage.Add("SRU_Gromp", new CheckBox("Smite Gromp"));
+            smitePage.Add("SRU_Murkwolf", new CheckBox("Smite Wolf"));
+            smitePage.Add("SRU_Razorbeak", new CheckBox("Smite Bird"));
+            smitePage.Add("SRU_Krug", new CheckBox("Smite Golem"));
+            smitePage.Add("Sru_Crab", new CheckBox("Smite Crab"));
+            smitePage.AddSeparator();
+            spellsPage = kindum.AddSubMenu("Spells Settings");
+            spellsPage.AddGroupLabel("Spells settings");
+            spellsPage.AddSeparator();
+            spellsPage.AddGroupLabel("Heal settings");
+            spellsPage.Add("spells.Heal.Hp", new Slider("Use Heal when HP is lower than {0}(%)", 30, 1, 100));
+            spellsPage.AddGroupLabel("Ignite settings");
+            spellsPage.Add("spell.Ignite.Use", new CheckBox("Use Ignite for KillSteal"));
+            spellsPage.Add("spells.Ignite.Focus", new Slider("Use Ignire when target HP isl lower than {0}(%)", 10, 1, 100));
+            spellsPage.Add("spells.Ignite.Kill", new CheckBox("Use ignite if killable"));
+
+        }
+        public static void miscpage()
+        {
+            miscmenu = kindum.AddSubMenu("Misc Menu", "othermenu");
+            miscmenu.AddGroupLabel("Misc Menu");
+            miscmenu.Add("lvlup", new CheckBox("Auto Level Up Spells", false));
+            miscmenu.AddSeparator();
+            miscmenu.AddGroupLabel("Skin settings");
+            miscmenu.Add("skin.Id", new Slider("Skin Editor", 0, 0, 1));
+            miscmenu.AddSeparator();
+            miscmenu.AddGroupLabel("Flee settings");
+            miscmenu.Add("flee.Smart.Q", new CheckBox("Smart Flee"));
+            miscmenu.AddSeparator();
+            miscmenu.AddGroupLabel("Safety Settings");
+            miscmenu.Add("flee.Min.Mana", new Slider("Min mana for using Q Spell", 30, 1, 100));
+            miscmenu.Add("combo.Qmin", new Slider("Play safe when Hp (%) is lower than", 60, 1, 100));
+            miscmenu.Add("combo.QminAG", new Slider("Play safe when enemys in range", 3, 1, 5));
+        }
+        public static float itemsbilgewaterHp()
+        {
+            return itemsMenu["items.bilgewater.HP"].Cast<Slider>().CurrentValue;
+        }
+        public static float minQaggresive()
+        {
+            return miscmenu["combo.QminAG"].Cast<Slider>().CurrentValue;
+        }
+        public static float minQcombo()
+        {
+            return miscmenu["combo.Qmin"].Cast<Slider>().CurrentValue;
+        }
+
+        public static bool fleeSmart()
+        {
+            return miscmenu["flee.Smart.Q"].Cast<CheckBox>().CurrentValue;
+        }
+        public static float MinmanaFlee()
+        {
+            return miscmenu["flee.Min.Mana"].Cast<Slider>().CurrentValue;
+        }
+        public static int skinId()
+        {
+            return miscmenu["skin.Id"].Cast<Slider>().CurrentValue;
+        }
+            
+
+        //
+        public static float spellsHealignite()
+        {
+            return spellsPage["spells.Ignite.Focus"].Cast<Slider>().CurrentValue;
+        }
+        public static bool spellsIgniteOnlyHpLow()
+        {
+            return spellsPage["spells.Ignite.Kill"].Cast<CheckBox>().CurrentValue;
+        }
+        public static bool spellsUseIgnite()
+        {
+            return spellsPage["spells.Ignite.Use"].Cast<CheckBox>().CurrentValue;
+        }
+
+
+        public static float itemsYOUMUShp()
+        {
+            return itemsMenu["items.Youmuss.HP"].Cast<Slider>().CurrentValue;
+        }
+        public static float itemsYOUMUSenemys()
+        {
+            return itemsMenu["items.Youmuss.Enemys"].Cast<Slider>().CurrentValue;
+        }
+        public static float itemsBOTRKhp()
+        {
+            return itemsMenu["items.Botrk.HP"].Cast<Slider>().CurrentValue;
+        }
+        public static bool useBilgewater()
+        {
+            return kincombo["combo.Bilgewater"].Cast<CheckBox>().CurrentValue;
+        }
+        public static bool useBotrk()
+        {
+            return kincombo["combo.Botrk"].Cast<CheckBox>().CurrentValue;
+        }
+        public static bool useYoumuss()
+        {
+            return kincombo["combo.Youmus"].Cast<CheckBox>().CurrentValue;
+        }
+        public static float spellsHealhp()
+        {
+            return spellsPage["spells.Heal.Hp"].Cast<Slider>().CurrentValue;
         }
 
 
@@ -124,10 +244,6 @@ namespace Kindred
         public static int rLogicEnemyMinHp()
         {
             return kinr["rlogic.ehp"].Cast<Slider>().CurrentValue;
-        }
-        public static bool ksQ()
-        {
-            return ks["ksq"].Cast<CheckBox>().CurrentValue;
         }
         public static bool useWjungle()
         {
@@ -192,4 +308,5 @@ namespace Kindred
         }
     }
 }
+
 
