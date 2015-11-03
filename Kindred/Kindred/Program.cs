@@ -304,7 +304,7 @@ namespace Kindred
 
             if (Q.IsReady() && KindredMenu.kinlcs["jungle.Q"].Cast<CheckBox>().CurrentValue && source.Distance(_Player) < Q.Range + 500)
             {
-                Q.Cast(Game.ActiveCursorPos);
+                Player.CastSpell(SpellSlot.Q, Game.CursorPos);
                 return;
                 
             }
