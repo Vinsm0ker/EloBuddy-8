@@ -2,17 +2,15 @@ using EloBuddy;
 using EloBuddy.SDK;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kindred
 {
-    class KindredMenu
+    internal static class KindredMenu
     {
-        public static Menu kindum, kincombo, kindraw, kinr, itemsMenu,smitePage,spellsPage, kinlcs, miscmenu;
+        private static Menu kindum;
+        public static Menu kincombo, kindraw, kinr, itemsMenu,smitePage,spellsPage, kinlcs, miscmenu;
+
         public static void loadMenu()
         {
             kindudepage();
@@ -26,9 +24,8 @@ namespace Kindred
 
         }
 
-      
 
-        public static void kindudepage()
+        private static void kindudepage()
         {
             kindum = MainMenu.AddMenu("Kindred Dude", "main");
             kindum.AddGroupLabel("About this script");
@@ -41,17 +38,17 @@ namespace Kindred
 
         }
 
-        public static void kindrawpage()
+        private static void kindrawpage()
         {
             kindraw = kindum.AddSubMenu("Draw  settings", "Draw");
             kindraw.AddGroupLabel("Draw Settings");
             kindraw.Add("nodraw", new CheckBox("No Display Drawing", false));
-            kindraw.Add("onlyReady", new CheckBox("Display only Ready", true));
+            kindraw.Add("onlyReady", new CheckBox("Display only Ready"));
             kindraw.AddSeparator();
-            kindraw.Add("draw.Q", new CheckBox("Draw Q Range", true));
-            kindraw.Add("draw.W", new CheckBox("Draw W Range", true));
-            kindraw.Add("draw.E", new CheckBox("Draw E Range", true));
-            kindraw.Add("draw.R", new CheckBox("Draw R Range", true));
+            kindraw.Add("draw.Q", new CheckBox("Draw Q Range"));
+            kindraw.Add("draw.W", new CheckBox("Draw W Range"));
+            kindraw.Add("draw.E", new CheckBox("Draw E Range"));
+            kindraw.Add("draw.R", new CheckBox("Draw R Range"));
             kindraw.AddSeparator();
             kindraw.AddGroupLabel("Combo Damage Draw");
             kindraw.Add("draw.combo.q", new CheckBox("Use Q Damage to Calculate"));
@@ -62,7 +59,7 @@ namespace Kindred
             kindraw.AddLabel(" - Uncheck the boxes if you wish to dont see a specific spell draw");
         }
 
-        public static void kincombopage()
+        private static void kincombopage()
         {
             kincombo = kindum.AddSubMenu("Combo settings", "Combo");
             kincombo.AddGroupLabel("Combo settings");
@@ -79,11 +76,12 @@ namespace Kindred
             kincombo.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Combo Key");
 
         }
-        public static void kinlcspage()
+
+        private static void kinlcspage()
         {
             kinlcs = kindum.AddSubMenu("Lane Clear Settings", "laneclear");
             kinlcs.AddGroupLabel("Lane clear settings");
-            kinlcs.Add("lc.Q", new CheckBox("Use Q Spell"));
+            kinlcs.Add("lc.Q", new CheckBox("Use Q Spell",false));
             kinlcs.Add("lc.W", new CheckBox("Use W Spell",false));
             kinlcs.Add("lc.Mana", new Slider("Min. Mana%",30));
             kinlcs.Add("lc.MinionsQ", new Slider("Min. Minions for Q", 3,0,3));
@@ -98,7 +96,8 @@ namespace Kindred
             kinlcs.AddLabel(" -Uncheck the boxes if you wish to dont use a specific spell while you are pressing the Jungle/LaneClear Key");
 
         }
-        public static void kinrpage()
+
+        private static void kinrpage()
         {
             kinr = kindum.AddSubMenu("Ultimate Menu", "rlogic");
             kinr.AddGroupLabel("Lamb's Respite Menu");
@@ -115,7 +114,8 @@ namespace Kindred
             kinr.AddGroupLabel("Pro Tips");
             kinr.AddLabel(" -Remember to play safe and don't be a teemo");
         }
-        public static void Activator()
+
+        private static void Activator()
         {
             itemsMenu = kindum.AddSubMenu("Items Settings", "Items");
             itemsMenu.AddGroupLabel("Items usage");
@@ -152,7 +152,8 @@ namespace Kindred
             spellsPage.Add("spells.Ignite.Kill", new CheckBox("Use ignite if killable"));
 
         }
-        public static void miscpage()
+
+        private static void miscpage()
         {
             miscmenu = kindum.AddSubMenu("Misc Menu", "othermenu");
             miscmenu.AddGroupLabel("Misc Menu");

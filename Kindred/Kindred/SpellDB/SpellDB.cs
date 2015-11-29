@@ -1,18 +1,10 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using EloBuddy;
-using EloBuddy.SDK;
 
 namespace Kindred.SpellDB
 {
         public static class SpellDatabase
         {
-
-            public static List<SpellData> Spells = new List<SpellData>();
+            private static readonly List<SpellData> Spells = new List<SpellData>();
 
             static SpellDatabase()
             {

@@ -1,15 +1,10 @@
-﻿using EloBuddy;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kindred
 {
-    class KindredMobs
+    internal static class KindredMobs
     {
-        public static string[] MinionNames =
+        public static readonly string[] MinionNames =
         {
            "SRU_Red",
            "SRU_Blue",

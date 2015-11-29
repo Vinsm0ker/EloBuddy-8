@@ -1,15 +1,9 @@
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kindred
 {
-    class KindredActivator
+    internal static class KindredActivator
     {
         public static Spell.Targeted ignite;
         public static Item youmus,botrk,bilgewater;
@@ -33,7 +27,7 @@ namespace Kindred
                 heal = new Spell.Active(SpellSlot.Summoner2);
             youmus = new Item(ItemId.Youmuus_Ghostblade);
             botrk = new Item(ItemId.Blade_of_the_Ruined_King);
-            bilgewater = new Item(3144, 550);
+            bilgewater = new Item(ItemId.Bilgewater_Cutlass);
         }
     }
 }
